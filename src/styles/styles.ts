@@ -1,4 +1,4 @@
-export const styles = {
+export const colors = {
   backgroundPrimary: "#111827",
   backgroundSecondary: "#242D3C",
   backgroundHrLightGray: "#222a3a",
