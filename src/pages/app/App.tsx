@@ -1,16 +1,23 @@
 import React from "react";
 import styled from "styled-components";
-import Footer from "./components/footer/footer";
+import Footer from "../../components/footer/footer";
 
-import Header from "./components/header/header";
-import OrderBook from "./components/order-book/order-book";
-import { colors } from "./styles/styles";
+import Header from "../../components/header/header";
+import {
+  buySideRowData,
+  sellSideRowData,
+} from "../../components/order-book/mock-row-data";
+import OrderBook from "../../components/order-book/order-book/order-book";
+import { colors } from "../../styles/styles";
 
 function App() {
   return (
     <AppWrapper>
       <Header />
-      <OrderBook />
+      <OrderBook
+        sellSideRowData={sellSideRowData}
+        buySideRowData={buySideRowData}
+      />
       <Footer />
     </AppWrapper>
   );
