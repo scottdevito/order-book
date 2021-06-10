@@ -1,23 +1,28 @@
 import React from "react";
+import styled from "styled-components";
+import Footer from "./components/footer/footer";
+
+import Header from "./components/header/header";
+import OrderBook from "./components/order-book/order-book";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AppWrapper>
+      <Header />
+      <OrderBook />
+      <Footer />
+    </AppWrapper>
   );
 }
 
 export default App;
+
+const AppWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  min-height: 100vh;
+`;
