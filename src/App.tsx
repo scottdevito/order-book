@@ -4,6 +4,7 @@ import Footer from "./components/footer/footer";
 
 import Header from "./components/header/header";
 import OrderBook from "./components/order-book/order-book";
+import { colors } from "./styles/styles";
 
 function App() {
   return (
@@ -25,4 +26,7 @@ const AppWrapper = styled.div`
   height: 100%;
   width: 100%;
   min-height: 100vh;
+  background: ${colors.backgroundSecondary};
+  padding: 7.5px 10px 0 10px;
+  box-sizing: border-box;
 `;

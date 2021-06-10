@@ -25,12 +25,13 @@ const HeaderWrapper = styled.header`
   min-height: 60px;
   height: 60px;
   max-height: 60px;
-  border-bottom: 2px solid ${colors.backgroundHrLightGray};
   padding: 0 75px 0 15px;
   max-width: 100%;
   width: 100%;
   box-sizing: border-box;
   background: ${colors.backgroundPrimary};
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 `;
 
 const Title = styled.h3`

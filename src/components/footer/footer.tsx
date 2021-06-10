@@ -27,7 +27,6 @@ const FooterWrapper = styled.footer`
   max-width: 100%;
   width: 100%;
   box-sizing: border-box;
-  background: ${colors.backgroundSecondary};
 `;
 
 const ActionButton = styled.button`
@@ -36,6 +35,7 @@ const ActionButton = styled.button`
   margin: 0 5px;
   border-radius: 5px;
   border: none;
+  font-weight: 600;
 
   &:hover {
     cursor: pointer;
