@@ -7,6 +7,7 @@ export const colors = {
   textGreen: "#0c966d",
   textWhite: "#fff",
   textGray: "#525968",
+  textLightGray: "#6a6d72",
   buttonBackgroundPurple: "#5741d9",
   buttonBackgroundRed: "#b91d1d",
   selectBackgroundGray: "#374151",
