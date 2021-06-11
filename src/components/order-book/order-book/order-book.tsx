@@ -5,6 +5,7 @@ import { OrderBookRowData } from "../../../types/order-book-types";
 import OrderBookSide from "../order-book-side/order-book-side";
 import sellDepthVisualizerBg from "../../../assets/images/sellDepthVisualizerBg.svg";
 import buyDepthVisualizerBg from "../../../assets/images/buyDepthVisualizerBg.svg";
+import { responsiveSizes } from "../../../consts";
 
 export interface OrderBookProps {
   sellSideRowData: OrderBookRowData;
@@ -119,7 +120,7 @@ const OrderBookWrapper = styled.section`
   border-bottom-right-radius: 5px;
   margin-top: 5px;
 
-  @media (max-width: 425px) {
+  @media (max-width: ${responsiveSizes.mobileScreen}) {
     flex-direction: column-reverse;
   }
 `;
@@ -135,7 +136,7 @@ const ColumnHeader = styled.p`
   margin: 0 0 10px 0;
   text-transform: uppercase;
 
-  @media (max-width: 425px) {
+  @media (max-width: ${responsiveSizes.mobileScreen}) {
     font-size: 15px;
   }
 `;
@@ -154,7 +155,7 @@ const LevelRowVisWrapper = styled.div<LevelRowVisWrapperProps>`
   background-position: ${(props) => (props.isSellSide ? "right" : "left")};
   background-size: ${(props) => `${props.depthVisualizationValue}% auto`};
 
-  @media (max-width: 425px) {
+  @media (max-width: ${responsiveSizes.mobileScreen}) {
     background-position: right;
   }
 `;
@@ -179,7 +180,7 @@ const LevelRowItem = styled.div`
   font-weight: 500;
   font-family: "Fira Code", sans-serif;
 
-  @media (max-width: 425px) {
+  @media (max-width: ${responsiveSizes.mobileScreen}) {
     font-size: 14px;
   }
 `;
