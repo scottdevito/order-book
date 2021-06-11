@@ -15,7 +15,7 @@ export interface OrderBookSideProps {
 
 const OrderBookSide: React.FC<OrderBookSideProps> = (props) => {
   return (
-    <SideWrapper>
+    <SideWrapper isSellSide={props.isSellSide}>
       <ColumnHeadersRowWrapper>
         {props.renderBookColumns(props.columnNames)}
       </ColumnHeadersRowWrapper>
@@ -28,13 +28,17 @@ const OrderBookSide: React.FC<OrderBookSideProps> = (props) => {
 
 export default OrderBookSide;
 
-const SideWrapper = styled.div`
+type SideWrapperProps = {
+  isSellSide: boolean;
+};
+const SideWrapper = styled.div<SideWrapperProps>`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
   flex: 1;
-  padding: 10px;
+  padding: ${(props) =>
+    props.isSellSide ? "10px 0 10px 10px" : "10px 10px 10px 0"};
   height: 100%;
   min-height: 100%;
   max-height: 100%;
@@ -59,5 +63,5 @@ const LevelsWrapper = styled.div`
   height: 100%;
   min-height: 100%;
   max-height: 100%;
-  width: 85%;
+  width: 100%;
 `;
