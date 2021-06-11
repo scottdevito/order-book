@@ -1,3 +1,7 @@
+// App-wide
 export const responsiveSizes = {
-  mobileScreen: "600px",
+  mobileScreen: "725px",
 };
+
+// OrderBooks
+export const columnNames = ["Price", "Size", "Total"];

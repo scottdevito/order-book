@@ -1,14 +1,17 @@
 import * as React from "react";
 import styled from "styled-components";
+import { responsiveSizes } from "../../../consts";
 import { OrderBookRowData } from "../../../types/order-book-types";
 
 export interface OrderBookSideProps {
   isSellSide: boolean;
+  isMobileScreen: boolean;
   renderBookColumns: (columnNames: Array<string>) => Array<React.ReactElement>;
   columnNames: Array<string>;
   renderLevelRows: (
     rowData: OrderBookRowData,
-    isSellSide: boolean
+    isSellSide: boolean,
+    isMobileScreen: boolean
   ) => Array<React.ReactElement>;
   rowData: OrderBookRowData;
 }
@@ -16,11 +19,15 @@ export interface OrderBookSideProps {
 const OrderBookSide: React.FC<OrderBookSideProps> = (props) => {
   return (
     <SideWrapper isSellSide={props.isSellSide}>
-      <ColumnHeadersRowWrapper>
+      <ColumnHeadersRowWrapper isSellSide={props.isSellSide}>
         {props.renderBookColumns(props.columnNames)}
       </ColumnHeadersRowWrapper>
-      <LevelsWrapper>
-        {props.renderLevelRows(props.rowData, props.isSellSide)}
+      <LevelsWrapper isSellSide={props.isSellSide}>
+        {props.renderLevelRows(
+          props.rowData,
+          props.isSellSide,
+          props.isMobileScreen
+        )}
       </LevelsWrapper>
     </SideWrapper>
   );
@@ -43,18 +50,34 @@ const SideWrapper = styled.div<SideWrapperProps>`
   min-height: 100%;
   max-height: 100%;
   width: 100%;
+
+  /* Strip left and right padding on mobile */
+  @media (max-width: ${responsiveSizes.mobileScreen}) {
+    padding: 10px 0;
+  }
 `;
 
-const ColumnHeadersRowWrapper = styled.div`
+type ColumnHeadersRowWrapperProps = {
+  isSellSide: boolean;
+};
+const ColumnHeadersRowWrapper = styled.div<ColumnHeadersRowWrapperProps>`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr;
   gap: 0px 0px;
   grid-auto-flow: row;
   width: 85%;
+
+  /* Don't display Sell column header row on mobile */
+  @media (max-width: ${responsiveSizes.mobileScreen}) {
+    display: ${(props) => (!!props.isSellSide ? "none" : "grid")};
+  }
 `;
 
-const LevelsWrapper = styled.div`
+type LevelsWrapperProps = {
+  isSellSide: boolean;
+};
+const LevelsWrapper = styled.div<LevelsWrapperProps>`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -64,4 +87,10 @@ const LevelsWrapper = styled.div`
   min-height: 100%;
   max-height: 100%;
   width: 100%;
+
+  /* Reverse Buy levels order on mobile */
+  @media (max-width: ${responsiveSizes.mobileScreen}) {
+    flex-direction: ${(props) =>
+      props.isSellSide === false ? "column-reverse" : "column"};
+  }
 `;

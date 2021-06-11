@@ -5,7 +5,8 @@ import { OrderBookRowData } from "../../../types/order-book-types";
 import OrderBookSide from "../order-book-side/order-book-side";
 import sellDepthVisualizerBg from "../../../assets/images/sellDepthVisualizerBg.svg";
 import buyDepthVisualizerBg from "../../../assets/images/buyDepthVisualizerBg.svg";
-import { responsiveSizes } from "../../../consts";
+import { columnNames, responsiveSizes } from "../../../consts";
+import { useMediaQuery } from "../../custom-hooks/use-media-query";
 
 export interface OrderBookProps {
   sellSideRowData: OrderBookRowData;
@@ -30,7 +31,8 @@ export const renderBookColumns = (columnNames: Array<string>) => {
  */
 export const renderLevelRows = (
   rowData: OrderBookRowData,
-  isSellSide: boolean
+  isSellSide: boolean,
+  isMobileScreen: boolean
 ) => {
   // Pre-calculate the final Total so we can use it in each row to create the depth visualizer
   const finalTotal = rowData.reduce((total, currentItem) => {
@@ -50,7 +52,8 @@ export const renderLevelRows = (
     // Update the running total
     runningTotal = currentRowItemTotal;
 
-    return isSellSide ? (
+    // Reorder rows considering which side we're rendering and on what the size of the screen is
+    return isSellSide && !isMobileScreen ? (
       <LevelRowVisWrapper
         key={idx}
         depthVisualizationValue={currentRowItemDepthPercent}
@@ -79,13 +82,21 @@ export const renderLevelRows = (
 };
 
 const OrderBook: React.FC<OrderBookProps> = (props) => {
-  const sellSideColumnNames = ["Total", "Size", "Price"];
-  const buySideColumnNames = [...sellSideColumnNames].reverse();
+  let isMobileScreen = useMediaQuery(
+    `(max-width: ${responsiveSizes.mobileScreen})`
+  );
+
+  // Reorder column header names based on screen layout for mobile
+  const sellSideColumnNames = isMobileScreen
+    ? columnNames
+    : [...columnNames].reverse();
+  const buySideColumnNames = isMobileScreen ? columnNames : columnNames;
 
   return (
     <OrderBookWrapper>
       <OrderBookSide
         isSellSide={true}
+        isMobileScreen={isMobileScreen}
         renderBookColumns={renderBookColumns}
         columnNames={sellSideColumnNames}
         renderLevelRows={renderLevelRows}
@@ -93,6 +104,7 @@ const OrderBook: React.FC<OrderBookProps> = (props) => {
       />
       <OrderBookSide
         isSellSide={false}
+        isMobileScreen={isMobileScreen}
         renderBookColumns={renderBookColumns}
         columnNames={buySideColumnNames}
         renderLevelRows={renderLevelRows}
