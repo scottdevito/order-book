@@ -165,7 +165,7 @@ const LevelRowVisWrapper = styled.div<LevelRowVisWrapperProps>`
       : `url(${buyDepthVisualizerBg})`};
   background-repeat: no-repeat;
   background-position: ${(props) => (props.isSellSide ? "right" : "left")};
-  background-size: ${(props) => `${props.depthVisualizationValue}% auto`};
+  background-size: ${(props) => `${props.depthVisualizationValue}% 100%`};
 
   @media (max-width: ${responsiveSizes.mobileScreen}) {
     background-position: right;
