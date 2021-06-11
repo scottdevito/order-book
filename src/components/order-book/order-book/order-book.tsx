@@ -31,28 +31,32 @@ export const renderLevelRows = (
   rowData: OrderBookRowData,
   isSellSide: boolean
 ) => {
-  // Pre-calculate the final total so we can use it in each row to create the depth visualizer
+  // Pre-calculate the final Total so we can use it in each row to create the depth visualizer
   const finalTotal = rowData.reduce((total, currentItem) => {
     return (total = total + currentItem[0]);
   }, 0);
 
   let runningTotal = 0;
 
-  // Create row - order columns based on which side we're rendering
+  // Create row - calculate row Total and store vars for depth visualizer
   return rowData.map((rowItem, idx) => {
-    // Update the running total
-    runningTotal = runningTotal + rowItem[0];
+    // Get the new row Total based on the previous Total and the new Size
+    const currentRowItemTotal = runningTotal + rowItem[0];
 
-    const currentDepthPercent = (runningTotal / finalTotal) * 100;
+    // Calculate the depth percentage based off of this row's Total
+    const currentRowItemDepthPercent = (currentRowItemTotal / finalTotal) * 100;
+
+    // Update the running total
+    runningTotal = currentRowItemTotal;
 
     return isSellSide ? (
       <LevelRowVisWrapper
         key={idx}
-        depthVisualizationValue={currentDepthPercent}
+        depthVisualizationValue={currentRowItemDepthPercent}
         isSellSide={isSellSide}
       >
         <LevelRowContentWrapper>
-          <LevelRowItem>{runningTotal + rowItem[0]}</LevelRowItem>
+          <LevelRowItem>{currentRowItemTotal}</LevelRowItem>
           <LevelRowItem>{rowItem[0]}</LevelRowItem>
           <LevelRowPriceItem>{rowItem[1]}</LevelRowPriceItem>
         </LevelRowContentWrapper>
@@ -60,13 +64,13 @@ export const renderLevelRows = (
     ) : (
       <LevelRowVisWrapper
         key={idx}
-        depthVisualizationValue={currentDepthPercent}
+        depthVisualizationValue={currentRowItemDepthPercent}
         isSellSide={isSellSide}
       >
         <LevelRowContentWrapper>
           <LevelRowPriceItem>{rowItem[1]}</LevelRowPriceItem>
           <LevelRowItem>{rowItem[0]}</LevelRowItem>
-          <LevelRowItem>{runningTotal + rowItem[0]}</LevelRowItem>
+          <LevelRowItem>{currentRowItemTotal}</LevelRowItem>
         </LevelRowContentWrapper>
       </LevelRowVisWrapper>
     );
@@ -114,6 +118,10 @@ const OrderBookWrapper = styled.section`
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   margin-top: 5px;
+
+  @media (max-width: 425px) {
+    flex-direction: column-reverse;
+  }
 `;
 
 const ColumnHeader = styled.p`
@@ -126,6 +134,10 @@ const ColumnHeader = styled.p`
   font-weight: 600;
   margin: 0 0 10px 0;
   text-transform: uppercase;
+
+  @media (max-width: 425px) {
+    font-size: 15px;
+  }
 `;
 
 type LevelRowVisWrapperProps = {
@@ -141,6 +153,10 @@ const LevelRowVisWrapper = styled.div<LevelRowVisWrapperProps>`
   background-repeat: no-repeat;
   background-position: ${(props) => (props.isSellSide ? "right" : "left")};
   background-size: ${(props) => `${props.depthVisualizationValue}% auto`};
+
+  @media (max-width: 425px) {
+    background-position: right;
+  }
 `;
 
 const LevelRowContentWrapper = styled.div`
@@ -162,6 +178,10 @@ const LevelRowItem = styled.div`
   font-size: 18px;
   font-weight: 500;
   font-family: "Fira Code", sans-serif;
+
+  @media (max-width: 425px) {
+    font-size: 14px;
+  }
 `;
 
 const LevelRowPriceItem = styled(LevelRowItem)`
