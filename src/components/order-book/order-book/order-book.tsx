@@ -1,7 +1,12 @@
 import * as React from "react";
 import styled from "styled-components";
 import { colors } from "../../../styles/styles";
-import { OrderBookRowData } from "../../../types/order-book-types";
+import {
+  OrderBookRowsData,
+  OrderData,
+  Size,
+  Total,
+} from "../../../types/order-book-types";
 import OrderBookSide from "../order-book-side/order-book-side";
 import sellDepthVisualizerBg from "../../../assets/images/sellDepthVisualizerBg.svg";
 import buyDepthVisualizerBg from "../../../assets/images/buyDepthVisualizerBg.svg";
@@ -9,8 +14,8 @@ import { columnNames, responsiveSizes } from "../../../consts";
 import { useMediaQuery } from "../../custom-hooks/use-media-query";
 
 export interface OrderBookProps {
-  sellSideRowData: OrderBookRowData;
-  buySideRowData: OrderBookRowData;
+  sellSideRowsData: OrderBookRowsData;
+  buySideRowsData: OrderBookRowsData;
 }
 
 /**
@@ -26,28 +31,28 @@ export const renderBookColumns = (columnNames: Array<string>) => {
 
 /**
  * Util function to render OrderBook level rows
- * @param rowData Array of [size, price] that represents all of the data for either the Buy or Sell side
+ * @param rowsData Array of [size, price] that represents all of the data for either the Buy or Sell side
  * @returns An array of rows as React elements
  */
 export const renderLevelRows = (
-  rowData: OrderBookRowData,
+  rowsData: OrderBookRowsData,
   isSellSide: boolean,
   isMobileScreen: boolean
 ) => {
   // Pre-calculate the final Total so we can use it in each row to create the depth visualizer
   const finalTotal =
-    rowData.length > 0
-      ? rowData.reduce((total, currentItem) => {
-          return (total = total + currentItem[0]);
+    rowsData.length > 0
+      ? rowsData.reduce((total: Total, currentItem: OrderData) => {
+          return (total = total + currentItem[1]);
         }, 0)
       : 0;
 
   let runningTotal = 0;
 
   // Create row - calculate row Total and store vars for depth visualizer
-  return rowData.map((rowItem, idx) => {
+  return rowsData.map((rowItem, idx) => {
     // Get the new row Total based on the previous Total and the new Size
-    const currentRowItemTotal = runningTotal + rowItem[0];
+    const currentRowItemTotal = runningTotal + rowItem[1];
 
     // Calculate the depth percentage based off of this row's Total
     const currentRowItemDepthPercent = (currentRowItemTotal / finalTotal) * 100;
@@ -64,8 +69,8 @@ export const renderLevelRows = (
       >
         <LevelRowContentWrapper>
           <LevelRowItem>{currentRowItemTotal}</LevelRowItem>
-          <LevelRowItem>{rowItem[0]}</LevelRowItem>
-          <LevelRowPriceItem>{rowItem[1]}</LevelRowPriceItem>
+          <LevelRowItem>{rowItem[1]}</LevelRowItem>
+          <LevelRowPriceItem>{rowItem[0]}</LevelRowPriceItem>
         </LevelRowContentWrapper>
       </LevelRowVisWrapper>
     ) : (
@@ -75,8 +80,8 @@ export const renderLevelRows = (
         isSellSide={isSellSide}
       >
         <LevelRowContentWrapper>
-          <LevelRowPriceItem>{rowItem[1]}</LevelRowPriceItem>
-          <LevelRowItem>{rowItem[0]}</LevelRowItem>
+          <LevelRowPriceItem>{rowItem[0]}</LevelRowPriceItem>
+          <LevelRowItem>{rowItem[1]}</LevelRowItem>
           <LevelRowItem>{currentRowItemTotal}</LevelRowItem>
         </LevelRowContentWrapper>
       </LevelRowVisWrapper>
@@ -103,7 +108,7 @@ const OrderBook: React.FC<OrderBookProps> = (props) => {
         renderBookColumns={renderBookColumns}
         columnNames={sellSideColumnNames}
         renderLevelRows={renderLevelRows}
-        rowData={props.sellSideRowData}
+        rowsData={props.sellSideRowsData}
       />
       <OrderBookSide
         isSellSide={false}
@@ -111,7 +116,7 @@ const OrderBook: React.FC<OrderBookProps> = (props) => {
         renderBookColumns={renderBookColumns}
         columnNames={buySideColumnNames}
         renderLevelRows={renderLevelRows}
-        rowData={props.buySideRowData}
+        rowsData={props.buySideRowsData}
       />
     </OrderBookWrapper>
   );

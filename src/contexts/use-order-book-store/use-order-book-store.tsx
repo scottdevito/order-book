@@ -1,19 +1,19 @@
 import React, { FC } from "react";
-import { OrderBookRowData } from "../../types/order-book-types";
+import { OrderBookRowsData } from "../../types/order-book-types";
 import { OrderBookStoreAction } from "./use-order-book-store-consts";
 
 // Context to keep track of the levels to display in the Order Book
 
 type State = {
-  asks: OrderBookRowData;
-  bids: OrderBookRowData;
+  asks: OrderBookRowsData;
+  bids: OrderBookRowsData;
 };
 
 export type Action = {
   type: OrderBookStoreAction.HydrateOrderBookState;
   payload: {
-    asks: OrderBookRowData;
-    bids: OrderBookRowData;
+    asks: OrderBookRowsData;
+    bids: OrderBookRowsData;
   };
 };
 
@@ -27,9 +27,6 @@ const OrderBookStoreReducer = (state: State, action: Action): State => {
   switch (action.type) {
     // Initial hydration of Order Book
     case OrderBookStoreAction.HydrateOrderBookState:
-      // TODO Sort by Price (sorted by Size by default from API)
-      // const sortedAsks = action.payload.asks
-
       return {
         asks: action.payload.asks,
         bids: action.payload.bids,

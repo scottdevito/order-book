@@ -1,8 +1,4 @@
 import * as React from "react";
-import {
-  sellSideRowData,
-  buySideRowData,
-} from "../../components/order-book/mock-row-data";
 import OrderBook from "../../components/order-book/order-book/order-book";
 import useWebSocket from "react-use-websocket";
 import { useOrderBookStore } from "../../contexts/use-order-book-store/use-order-book-store";
@@ -66,7 +62,9 @@ const OrderBookContainer: React.FC<OrderBookContainerProps> = () => {
       ]);
   }, [lastMessage]);
 
-  return <OrderBook sellSideRowData={state.asks} buySideRowData={state.bids} />;
+  return (
+    <OrderBook sellSideRowsData={state.asks} buySideRowsData={state.bids} />
+  );
 };
 
 export default OrderBookContainer;

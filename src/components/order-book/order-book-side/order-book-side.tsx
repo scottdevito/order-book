@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 import { responsiveSizes } from "../../../consts";
-import { OrderBookRowData } from "../../../types/order-book-types";
+import { OrderBookRowsData } from "../../../types/order-book-types";
 
 export interface OrderBookSideProps {
   isSellSide: boolean;
@@ -9,11 +9,11 @@ export interface OrderBookSideProps {
   renderBookColumns: (columnNames: Array<string>) => Array<React.ReactElement>;
   columnNames: Array<string>;
   renderLevelRows: (
-    rowData: OrderBookRowData,
+    rowData: OrderBookRowsData,
     isSellSide: boolean,
     isMobileScreen: boolean
   ) => Array<React.ReactElement>;
-  rowData: OrderBookRowData;
+  rowsData: OrderBookRowsData;
 }
 
 const OrderBookSide: React.FC<OrderBookSideProps> = (props) => {
@@ -24,7 +24,7 @@ const OrderBookSide: React.FC<OrderBookSideProps> = (props) => {
       </ColumnHeadersRowWrapper>
       <LevelsWrapper isSellSide={props.isSellSide}>
         {props.renderLevelRows(
-          props.rowData,
+          props.rowsData,
           props.isSellSide,
           props.isMobileScreen
         )}
