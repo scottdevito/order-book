@@ -1,12 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { OrderBookStoreProvider } from "./contexts/use-order-book-store/use-order-book-store";
 import "./index.css";
 import App from "./pages/app/App";
 import reportWebVitals from "./reportWebVitals";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <OrderBookStoreProvider>
+      <App />
+    </OrderBookStoreProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

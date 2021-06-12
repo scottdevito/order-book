@@ -35,9 +35,12 @@ export const renderLevelRows = (
   isMobileScreen: boolean
 ) => {
   // Pre-calculate the final Total so we can use it in each row to create the depth visualizer
-  const finalTotal = rowData.reduce((total, currentItem) => {
-    return (total = total + currentItem[0]);
-  }, 0);
+  const finalTotal =
+    rowData.length > 0
+      ? rowData.reduce((total, currentItem) => {
+          return (total = total + currentItem[0]);
+        }, 0)
+      : 0;
 
   let runningTotal = 0;
 
