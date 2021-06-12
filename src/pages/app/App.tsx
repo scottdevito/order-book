@@ -3,21 +3,14 @@ import styled from "styled-components";
 import Footer from "../../components/footer/footer";
 
 import Header from "../../components/header/header";
-import {
-  buySideRowData,
-  sellSideRowData,
-} from "../../components/order-book/mock-row-data";
-import OrderBook from "../../components/order-book/order-book/order-book";
 import { colors } from "../../styles/styles";
+import OrderBookContainer from "../../containers/order-book-container/order-book-container";
 
 function App() {
   return (
     <AppWrapper>
       <Header />
-      <OrderBook
-        sellSideRowData={sellSideRowData}
-        buySideRowData={buySideRowData}
-      />
+      <OrderBookContainer />
       <Footer />
     </AppWrapper>
   );

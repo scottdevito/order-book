@@ -49,6 +49,7 @@ const sellSideProps = {
   renderLevelRows: renderLevelRows,
   rowData: sellSideRowData,
   isSellSide: true,
+  isMobileScreen: false,
 };
 
 const buySideProps = {
@@ -57,6 +58,7 @@ const buySideProps = {
   renderLevelRows: renderLevelRows,
   rowData: buySideRowData,
   isSellSide: false,
+  isMobileScreen: false,
 };
 
 describe("Order Book Side", () => {
@@ -65,7 +67,7 @@ describe("Order Book Side", () => {
 
     const levels = await screen.findAllByText(/[0-9]/);
 
-    // We should get one number per row for each column that exists * the number of rows
+    // For every row, we should get one number for each column that exists * the number of rows
     expect(levels).toHaveLength(
       sellSideColumnNames.length * sellSideRowData.length
     );
@@ -76,7 +78,7 @@ describe("Order Book Side", () => {
 
     const levels = await screen.findAllByText(/[0-9]/);
 
-    // We should get one number per row for each column that exists * the number of rows
+    // For every row, we should get one number for each column that exists * the number of rows
     expect(levels).toHaveLength(
       sellSideColumnNames.length * sellSideRowData.length
     );

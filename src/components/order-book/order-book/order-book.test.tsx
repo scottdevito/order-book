@@ -45,7 +45,7 @@ const props = {
 };
 
 describe("Order Book", () => {
-  test("Buy and sell totals render correctly", () => {
+  test("Buy and Sell Total columns render correctly", () => {
     const { queryByText, rerender } = render(<OrderBook {...props} />);
 
     // Expect the final left side total to exist as shown in the mockup
@@ -61,5 +61,9 @@ describe("Order Book", () => {
 
     // Expect the final right side total to exist as shown in the mockup
     expect(queryByText("278747")).toBeTruthy();
+  });
+
+  test("Buy and Sell can render without data", () => {
+    render(<OrderBook sellSideRowData={[]} buySideRowData={[]} />);
   });
 });
