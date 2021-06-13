@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 import { responsiveSizes } from "../../../consts";
-import { OrderBookRowsData } from "../../../types/order-book-types";
+import { OrderBookRowsData } from "../order-book/order-book-types";
 
 export interface OrderBookSideProps {
   isSellSide: boolean;

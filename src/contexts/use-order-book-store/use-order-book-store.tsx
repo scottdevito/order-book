@@ -1,12 +1,20 @@
 import React, { FC } from "react";
-import { OrderBookRowsData } from "../../types/order-book-types";
-import { OrderBookStoreAction } from "./use-order-book-store-consts";
+import { OrderBookRowsData } from "../../components/order-book/order-book/order-book-types";
+import {
+  OrderBookStoreAction,
+  AvailableProductIds,
+  AvailableGroupings,
+} from "./use-order-book-store-consts";
 
 // Context to keep track of the levels to display in the Order Book
 
 type State = {
   asks: OrderBookRowsData;
   bids: OrderBookRowsData;
+  activeGrouping: AvailableGroupings["XBTUSD"] | AvailableGroupings["ETHUSD"];
+  activeProductId: AvailableProductIds.XBTUSD | AvailableProductIds.ETHUSD;
+  hasError: boolean;
+  isLoading: boolean;
 };
 
 export type Action = {
@@ -28,6 +36,7 @@ const OrderBookStoreReducer = (state: State, action: Action): State => {
     // Initial hydration of Order Book
     case OrderBookStoreAction.HydrateOrderBookState:
       return {
+        ...state,
         asks: action.payload.asks,
         bids: action.payload.bids,
       };
@@ -43,6 +52,10 @@ export const OrderBookStoreProvider: FC<{}> = ({
   const orderBookStoreState: State = {
     asks: [],
     bids: [],
+    activeGrouping: 0.5,
+    activeProductId: AvailableProductIds.XBTUSD,
+    hasError: false,
+    isLoading: false,
   };
 
   const [state, dispatch] = React.useReducer(

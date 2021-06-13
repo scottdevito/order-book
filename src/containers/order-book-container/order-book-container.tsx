@@ -66,7 +66,7 @@ const OrderBookContainer: React.FC<OrderBookContainerProps> = () => {
         });
       }
     }
-  }, [dispatch, lastMessage, state.asks, state.asks]);
+  }, [dispatch, lastMessage, state.asks, state.bids]);
 
   // When last message changes, add it to the list of messages
   React.useEffect(() => {

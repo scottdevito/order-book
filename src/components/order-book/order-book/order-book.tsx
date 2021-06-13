@@ -1,12 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 import { colors } from "../../../styles/styles";
-import {
-  OrderBookRowsData,
-  OrderData,
-  Size,
-  Total,
-} from "../../../types/order-book-types";
+import { OrderBookRowsData, OrderData, Total } from "./order-book-types";
 import OrderBookSide from "../order-book-side/order-book-side";
 import sellDepthVisualizerBg from "../../../assets/images/sellDepthVisualizerBg.svg";
 import buyDepthVisualizerBg from "../../../assets/images/buyDepthVisualizerBg.svg";

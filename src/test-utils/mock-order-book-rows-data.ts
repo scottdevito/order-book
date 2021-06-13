@@ -1,4 +1,4 @@
-import { OrderBookRowsData } from "../types/order-book-types";
+import { OrderBookRowsData } from "../components/order-book/order-book/order-book-types";
 
 export const mockSellSideRowsData: OrderBookRowsData = [
   [47341.0, 2300],
