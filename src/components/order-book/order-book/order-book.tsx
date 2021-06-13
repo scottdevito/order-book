@@ -7,10 +7,18 @@ import sellDepthVisualizerBg from "../../../assets/images/sellDepthVisualizerBg.
 import buyDepthVisualizerBg from "../../../assets/images/buyDepthVisualizerBg.svg";
 import { columnNames, responsiveSizes } from "../../../consts";
 import { useMediaQuery } from "../../custom-hooks/use-media-query";
+import { State } from "xstate";
+import { ORDER_BOOK } from "../../../machines";
 
 export interface OrderBookProps {
   sellSideRowsData: OrderBookRowsData;
   buySideRowsData: OrderBookRowsData;
+  machineState:
+    | State<{
+        error: boolean;
+        isLoading: boolean;
+      }>
+    | any;
 }
 
 /**
@@ -97,22 +105,28 @@ const OrderBook: React.FC<OrderBookProps> = (props) => {
 
   return (
     <OrderBookWrapper>
-      <OrderBookSide
-        isSellSide={true}
-        isMobileScreen={isMobileScreen}
-        renderBookColumns={renderBookColumns}
-        columnNames={sellSideColumnNames}
-        renderLevelRows={renderLevelRows}
-        rowsData={props.sellSideRowsData}
-      />
-      <OrderBookSide
-        isSellSide={false}
-        isMobileScreen={isMobileScreen}
-        renderBookColumns={renderBookColumns}
-        columnNames={buySideColumnNames}
-        renderLevelRows={renderLevelRows}
-        rowsData={props.buySideRowsData}
-      />
+      {props.machineState.matches(ORDER_BOOK.LOADING) ? (
+        <div>LOADING...</div>
+      ) : (
+        <>
+          <OrderBookSide
+            isSellSide={true}
+            isMobileScreen={isMobileScreen}
+            renderBookColumns={renderBookColumns}
+            columnNames={sellSideColumnNames}
+            renderLevelRows={renderLevelRows}
+            rowsData={props.sellSideRowsData}
+          />
+          <OrderBookSide
+            isSellSide={false}
+            isMobileScreen={isMobileScreen}
+            renderBookColumns={renderBookColumns}
+            columnNames={buySideColumnNames}
+            renderLevelRows={renderLevelRows}
+            rowsData={props.buySideRowsData}
+          />
+        </>
+      )}
     </OrderBookWrapper>
   );
 };

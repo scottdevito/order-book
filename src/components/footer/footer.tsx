@@ -5,9 +5,11 @@ import { colors } from "../../styles/styles";
 export interface FooterProps {}
 
 const Footer: React.FC<FooterProps> = () => {
+  const handleKillFeed = () => {};
+
   return (
     <FooterWrapper>
-      <ToggleFeedButton>Toggle Feed</ToggleFeedButton>
+      <ToggleFeedButton onClick={handleKillFeed}>Toggle Feed</ToggleFeedButton>
       <KillFeedButton>Kill Feed</KillFeedButton>
     </FooterWrapper>
   );
@@ -23,7 +25,6 @@ const FooterWrapper = styled.footer`
   min-height: 80px;
   height: 80px;
   max-height: 80px;
-  border-bottom: 2px solid ${colors.backgroundHrLightGray};
   max-width: 100%;
   width: 100%;
   box-sizing: border-box;
