@@ -1,13 +1,4 @@
-import {
-  assign,
-  Assigner,
-  DefaultContext,
-  Event,
-  EventObject,
-  Machine,
-  PropertyAssigner,
-  PayloadSender,
-} from "xstate";
+import { assign, Machine } from "xstate";
 import { OrderBookRowsData } from "./components/order-book/order-book/order-book-types";
 import {
   AvailableGroupings,
@@ -43,7 +34,7 @@ export type MachineContext = {
   isLoading: boolean;
 };
 
-interface OrderBookStateSchema {
+export interface OrderBookStateSchema {
   states: {
     disconnected: {};
     loading: {};
@@ -53,25 +44,25 @@ interface OrderBookStateSchema {
 }
 
 type IHydrateEvent = {
-  type: "HYDRATE";
+  type: ORDER_BOOK_EVENT.HYDRATE;
   asks: OrderBookRowsData;
   bids: OrderBookRowsData;
 };
 
-type OrderBookEvent =
-  | { type: "OPEN_CONNECTION" }
+export type OrderBookEvent =
+  | { type: ORDER_BOOK_EVENT.OPEN_CONNECTION }
   | IHydrateEvent
-  | { type: "DISCONNECT" }
-  | { type: "ERROR" }
-  | { type: "FETCH" }
-  | { type: "KILL" }
-  | { type: "TOGGLE" }
-  | { type: "GROUP" }
-  | { type: "RESOLVE" }
-  | { type: "REJECT" };
+  | { type: ORDER_BOOK_EVENT.DISCONNECT }
+  | { type: ORDER_BOOK_EVENT.ERROR }
+  | { type: ORDER_BOOK_EVENT.FETCH }
+  | { type: ORDER_BOOK_EVENT.KILL }
+  | { type: ORDER_BOOK_EVENT.TOGGLE }
+  | { type: ORDER_BOOK_EVENT.GROUP }
+  | { type: ORDER_BOOK_EVENT.RESOLVE }
+  | { type: ORDER_BOOK_EVENT.REJECT };
 
 export const orderBookMachine = Machine<
-  any,
+  MachineContext,
   OrderBookStateSchema,
   OrderBookEvent
 >({
@@ -82,7 +73,7 @@ export const orderBookMachine = Machine<
     bids: [],
     activeGrouping: 0.5,
     activeProductId: AvailableProductIds.XBTUSD,
-    error: false,
+    hasError: false,
     isLoading: false,
   },
   states: {

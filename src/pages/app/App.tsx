@@ -1,17 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import Footer from "../../components/footer/footer";
-
-import Header from "../../components/header/header";
 import { colors } from "../../styles/styles";
 import OrderBookContainer from "../../containers/order-book-container/order-book-container";
 
 function App() {
   return (
     <AppWrapper>
-      <Header />
       <OrderBookContainer />
-      <Footer />
     </AppWrapper>
   );
 }

@@ -10,6 +10,7 @@ afterEach(cleanup);
 const props = {
   sellSideRowsData: mockSellSideRowsData,
   buySideRowsData: mockBuySideRowsData,
+  machineState: { matches: () => false },
 };
 
 describe("Order Book", () => {
@@ -27,7 +28,7 @@ describe("Order Book", () => {
   });
 
   test("Buy and Sell sides can render without data", () => {
-    render(<OrderBook sellSideRowsData={[]} buySideRowsData={[]} />);
+    render(<OrderBook {...props} sellSideRowsData={[]} buySideRowsData={[]} />);
   });
 
   test("Buy and Sell sides can handle different data on re-render", () => {
@@ -36,9 +37,18 @@ describe("Order Book", () => {
     // Re-render and expect the final right side total to exist as shown in the mockup
     rerender(
       <OrderBook
+        {...props}
         sellSideRowsData={mockBuySideRowsData}
         buySideRowsData={mockSellSideRowsData}
       />
     );
+  });
+
+  test("Loading div renders when in the loading state", () => {
+    const { queryByText } = render(
+      <OrderBook {...props} machineState={{ matches: () => true }} />
+    );
+
+    expect(queryByText("Loading...")).toBeTruthy();
   });
 });

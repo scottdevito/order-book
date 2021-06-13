@@ -105,8 +105,8 @@ const OrderBook: React.FC<OrderBookProps> = (props) => {
 
   return (
     <OrderBookWrapper>
-      {props.machineState.matches(ORDER_BOOK.LOADING) ? (
-        <div>LOADING...</div>
+      {!!props.machineState.matches(ORDER_BOOK.LOADING) ? (
+        <div>Loading...</div>
       ) : (
         <>
           <OrderBookSide

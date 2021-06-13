@@ -1,12 +1,11 @@
 import * as React from "react";
 import OrderBook from "../../components/order-book/order-book/order-book";
 import useWebSocket from "react-use-websocket";
-import { useOrderBookStore } from "../../contexts/use-order-book-store/use-order-book-store";
-import { OrderBookStoreAction } from "../../contexts/use-order-book-store/use-order-book-store-consts";
 import { bookUi1FeedConsts } from "../../consts";
-import { Machine, assign } from "xstate";
 import { useMachine } from "@xstate/react";
 import { orderBookMachine, ORDER_BOOK_EVENT } from "../../machines";
+import Header from "../../components/header/header";
+import Footer from "../../components/footer/footer";
 
 export interface OrderBookContainerProps {}
 
@@ -22,18 +21,22 @@ const OrderBookContainer: React.FC<OrderBookContainerProps> = () => {
     sendJsonMessage,
     lastMessage,
     // lastJsonMessage,
-    readyState,
+    // readyState,
   } = useWebSocket(socketUrl, {
     onOpen: () => {
       console.log("Connection opened");
       send({ type: ORDER_BOOK_EVENT.OPEN_CONNECTION });
 
-      // // Send the initial message to open the WS connection
-      sendJsonMessage({
-        event: bookUi1FeedConsts.events.subscribe,
-        feed: bookUi1FeedConsts.name,
-        product_ids: [bookUi1FeedConsts.productIds.xbtusd],
-      });
+      try {
+        // // Send the initial message to open the WS connection
+        sendJsonMessage({
+          event: bookUi1FeedConsts.events.subscribe,
+          feed: bookUi1FeedConsts.name,
+          product_ids: [bookUi1FeedConsts.productIds.xbtusd],
+        });
+      } catch (error) {
+        send({ type: ORDER_BOOK_EVENT.ERROR });
+      }
     },
     onClose: () => {
       console.log("Connection closed");
@@ -67,15 +70,12 @@ const OrderBookContainer: React.FC<OrderBookContainerProps> = () => {
           bids: lastMessageObj.bids,
         });
       }
+    } else {
+      console.log(lastMessageObj);
+      // TODO Implement diff update loop
+      // diffUpdateLoop()
     }
   }, [send, lastMessage, state.context.asks, state.context.bids]);
-
-  // Unsubscribe
-  //   return sendJsonMessage({
-  //     event: bookUi1FeedConsts.events.unsubscribe,
-  //     feed: bookUi1FeedConsts.name,
-  //     product_ids: [bookUi1FeedConsts.productIds.xbtusd],
-  //   });
 
   React.useEffect(() => {
     const subscription = service.subscribe((state) => {
@@ -86,11 +86,18 @@ const OrderBookContainer: React.FC<OrderBookContainerProps> = () => {
   }, [service]);
 
   return (
-    <OrderBook
-      sellSideRowsData={state.context.asks}
-      buySideRowsData={state.context.bids}
-      machineState={state}
-    />
+    <>
+      <Header />
+      <OrderBook
+        sellSideRowsData={state.context.asks}
+        buySideRowsData={state.context.bids}
+        machineState={state}
+      />
+      <Footer
+        orderBookMachineSend={send}
+        cfSocketSendJsonMessage={sendJsonMessage}
+      />
+    </>
   );
 };
 

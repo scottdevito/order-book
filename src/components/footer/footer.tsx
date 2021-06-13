@@ -1,16 +1,55 @@
+import { useMachine } from "@xstate/react";
 import * as React from "react";
+import { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 import styled from "styled-components";
+import {
+  send,
+  Sender,
+  SingleOrArray,
+  SCXML,
+  EventData,
+  State,
+  Interpreter,
+} from "xstate";
+import { bookUi1FeedConsts } from "../../consts";
+import {
+  orderBookMachine,
+  ORDER_BOOK_EVENT,
+  OrderBookEvent,
+  MachineContext,
+  OrderBookStateSchema,
+} from "../../machines";
 import { colors } from "../../styles/styles";
 
-export interface FooterProps {}
+export interface FooterProps {
+  orderBookMachineSend: Interpreter<
+    MachineContext,
+    OrderBookStateSchema,
+    OrderBookEvent
+  >["send"];
+  // orderBookMachineSend: Sender<SingleOrArray<SCXML.Event<OrderBookEvent>>>;
+  cfSocketSendJsonMessage: SendJsonMessage;
+}
 
-const Footer: React.FC<FooterProps> = () => {
-  const handleKillFeed = () => {};
+const Footer: React.FC<FooterProps> = (props) => {
+  // TODO Change to throw an error instead of disconnect
+  const handleKillFeed = () => {
+    try {
+      props.cfSocketSendJsonMessage({
+        event: bookUi1FeedConsts.events.unsubscribe,
+        feed: bookUi1FeedConsts.name,
+        product_ids: [bookUi1FeedConsts.productIds.xbtusd],
+      });
+      props.orderBookMachineSend({ type: ORDER_BOOK_EVENT.DISCONNECT });
+    } catch (error) {
+      props.orderBookMachineSend({ type: ORDER_BOOK_EVENT.ERROR });
+    }
+  };
 
   return (
     <FooterWrapper>
-      <ToggleFeedButton onClick={handleKillFeed}>Toggle Feed</ToggleFeedButton>
-      <KillFeedButton>Kill Feed</KillFeedButton>
+      <ToggleFeedButton>Toggle Feed</ToggleFeedButton>
+      <KillFeedButton onClick={handleKillFeed}>Kill Feed</KillFeedButton>
     </FooterWrapper>
   );
 };
