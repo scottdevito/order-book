@@ -9,6 +9,7 @@ import { columnNames, responsiveSizes } from "../../../consts";
 import { useMediaQuery } from "../../custom-hooks/use-media-query";
 import { State } from "xstate";
 import { ORDER_BOOK } from "../../../machines";
+import debounce from "lodash.debounce";
 
 export interface OrderBookProps {
   sellSideRowsData: OrderBookRowsData;
@@ -42,10 +43,26 @@ export const renderLevelRows = (
   isSellSide: boolean,
   isMobileScreen: boolean
 ) => {
+  // Util sorting function for 2d arrays
+  const twoDimArrSort = function (a: OrderData, b: OrderData) {
+    return a[0] - b[0];
+  };
+
+  /**
+   *  Sort by price based on side/mobile screen
+   *    Sell side => always sort high-to-low
+   *    Buy side => desktop sort low-to-high, mobile sort high-to-low
+   */
+  const sortedRowsData = isSellSide
+    ? isMobileScreen
+      ? [...rowsData].sort(twoDimArrSort).reverse()
+      : [...rowsData].sort(twoDimArrSort).reverse()
+    : [...rowsData].sort(twoDimArrSort);
+
   // Pre-calculate the final Total so we can use it in each row to create the depth visualizer
   const finalTotal =
-    rowsData.length > 0
-      ? rowsData.reduce((total: Total, currentItem: OrderData) => {
+    sortedRowsData.length > 0
+      ? sortedRowsData.reduce((total: Total, currentItem: OrderData) => {
           return (total = total + currentItem[1]);
         }, 0)
       : 0;
@@ -53,7 +70,7 @@ export const renderLevelRows = (
   let runningTotal = 0;
 
   // Create row - calculate row Total and store vars for depth visualizer
-  return rowsData.map((rowItem, idx) => {
+  return sortedRowsData.map((rowItem, idx) => {
     // Get the new row Total based on the previous Total and the new Size
     const currentRowItemTotal = runningTotal + rowItem[1];
 
@@ -65,29 +82,63 @@ export const renderLevelRows = (
 
     // Reorder rows considering which side we're rendering and on what the size of the screen is
     return isSellSide && !isMobileScreen ? (
-      <LevelRowVisWrapper
+      <div
         key={idx}
-        depthVisualizationValue={currentRowItemDepthPercent}
-        isSellSide={isSellSide}
+        style={{
+          width: "100%",
+          background: isSellSide
+            ? `url(${sellDepthVisualizerBg})`
+            : `url(${buyDepthVisualizerBg})`,
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: isSellSide ? "right" : "left",
+          backgroundSize: `${currentRowItemDepthPercent}% 100%`,
+        }}
       >
         <LevelRowContentWrapper>
-          <LevelRowItem>{currentRowItemTotal}</LevelRowItem>
-          <LevelRowItem>{rowItem[1]}</LevelRowItem>
-          <LevelRowPriceItem>{rowItem[0]}</LevelRowPriceItem>
+          <LevelRowItem>
+            {new Intl.NumberFormat().format(currentRowItemTotal)}
+          </LevelRowItem>
+          <LevelRowItem>
+            {new Intl.NumberFormat().format(rowItem[1])}
+          </LevelRowItem>
+          <LevelRowPriceItem>
+            {new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+            }).format(rowItem[0])}
+          </LevelRowPriceItem>
         </LevelRowContentWrapper>
-      </LevelRowVisWrapper>
+      </div>
     ) : (
-      <LevelRowVisWrapper
+      <div
+        className="level-row-vis-wrapper"
         key={idx}
-        depthVisualizationValue={currentRowItemDepthPercent}
-        isSellSide={isSellSide}
+        style={{
+          width: "100%",
+          background: isSellSide
+            ? `url(${sellDepthVisualizerBg})`
+            : `url(${buyDepthVisualizerBg})`,
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: isSellSide
+            ? "right"
+            : isMobileScreen
+            ? "right"
+            : "left",
+          backgroundSize: `${currentRowItemDepthPercent}% 100%`,
+        }}
       >
         <LevelRowContentWrapper>
-          <LevelRowPriceItem>{rowItem[0]}</LevelRowPriceItem>
-          <LevelRowItem>{rowItem[1]}</LevelRowItem>
-          <LevelRowItem>{currentRowItemTotal}</LevelRowItem>
+          <LevelRowPriceItem>
+            {new Intl.NumberFormat().format(rowItem[0])}
+          </LevelRowPriceItem>
+          <LevelRowItem>
+            {new Intl.NumberFormat().format(rowItem[1])}
+          </LevelRowItem>
+          <LevelRowItem>
+            {new Intl.NumberFormat().format(currentRowItemTotal)}
+          </LevelRowItem>
         </LevelRowContentWrapper>
-      </LevelRowVisWrapper>
+      </div>
     );
   });
 };
@@ -167,25 +218,6 @@ const ColumnHeader = styled.p`
 
   @media (max-width: ${responsiveSizes.mobileScreen}) {
     font-size: 15px;
-  }
-`;
-
-type LevelRowVisWrapperProps = {
-  depthVisualizationValue: number;
-  isSellSide: boolean;
-};
-const LevelRowVisWrapper = styled.div<LevelRowVisWrapperProps>`
-  width: 100%;
-  background: ${(props) =>
-    props.isSellSide
-      ? `url(${sellDepthVisualizerBg})`
-      : `url(${buyDepthVisualizerBg})`};
-  background-repeat: no-repeat;
-  background-position: ${(props) => (props.isSellSide ? "right" : "left")};
-  background-size: ${(props) => `${props.depthVisualizationValue}% 100%`};
-
-  @media (max-width: ${responsiveSizes.mobileScreen}) {
-    background-position: right;
   }
 `;
 

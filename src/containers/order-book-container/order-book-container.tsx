@@ -3,14 +3,13 @@ import OrderBook from "../../components/order-book/order-book/order-book";
 import useWebSocket from "react-use-websocket";
 import { bookUi1FeedConsts } from "../../consts";
 import { useMachine } from "@xstate/react";
-import { orderBookMachine, ORDER_BOOK_EVENT } from "../../machines";
+import { orderBookMachine, ORDER_BOOK, ORDER_BOOK_EVENT } from "../../machines";
 import Header from "../../components/header/header";
 import Footer from "../../components/footer/footer";
 
 export interface OrderBookContainerProps {}
 
 const OrderBookContainer: React.FC<OrderBookContainerProps> = () => {
-  // const { state, dispatch } = useOrderBookStore();
   const [state, send, service] = useMachine(orderBookMachine);
 
   // Configure WS connection to Crypto Facilities
@@ -19,8 +18,7 @@ const OrderBookContainer: React.FC<OrderBookContainerProps> = () => {
 
   const {
     sendJsonMessage,
-    lastMessage,
-    // lastJsonMessage,
+    lastJsonMessage,
     // readyState,
   } = useWebSocket(socketUrl, {
     onOpen: () => {
@@ -46,44 +44,53 @@ const OrderBookContainer: React.FC<OrderBookContainerProps> = () => {
       console.error("Error connecting to CF");
       send({ type: ORDER_BOOK_EVENT.ERROR });
     },
+    onMessage: () => {
+      if (state.matches(ORDER_BOOK.IDLE)) {
+        send({
+          type: ORDER_BOOK_EVENT.UPDATE_ORDERS,
+          asks: lastJsonMessage.asks,
+          bids: lastJsonMessage.bids,
+        });
+      }
+    },
     // Will attempt to reconnect on all close events, such as server shutting down
     // TODO Tighten acceptable reconnect cases
-    shouldReconnect: (closeEvent) => true,
+    shouldReconnect: (closeEvent) => false,
   });
 
   // Hydrate the store
   React.useEffect(() => {
-    const lastMessageObj = lastMessage && JSON.parse(lastMessage.data);
-
-    // If there isn't any data in the store, check the last message for a snapshot to be used for hydration
+    // If the state isn't idle and there isn't any data in the store, check the last message for a snapshot to be used for hydration
     if (
-      state?.context?.asks?.length === 0 ||
+      (!state.matches(ORDER_BOOK.IDLE) && state?.context?.asks?.length === 0) ||
       state?.context?.bids?.length === 0
     ) {
       if (
-        !!lastMessageObj &&
-        lastMessageObj.feed === bookUi1FeedConsts.snapshot
+        !!lastJsonMessage &&
+        lastJsonMessage.feed === bookUi1FeedConsts.snapshot
       ) {
         send({
           type: ORDER_BOOK_EVENT.HYDRATE,
-          asks: lastMessageObj.asks,
-          bids: lastMessageObj.bids,
+          asks: lastJsonMessage.asks,
+          bids: lastJsonMessage.bids,
         });
       }
-    } else {
-      console.log(lastMessageObj);
-      // TODO Implement diff update loop
-      // diffUpdateLoop()
     }
-  }, [send, lastMessage, state.context.asks, state.context.bids]);
+  }, [
+    send,
+    lastJsonMessage,
+    state.context.asks,
+    state.context.bids,
+    state.matches,
+  ]);
 
-  React.useEffect(() => {
-    const subscription = service.subscribe((state) => {
-      // TODO Remove this
-      // Simple state logging
-      console.log("XState state: ", state);
-    });
-  }, [service]);
+  // React.useEffect(() => {
+  //   // const subscription = service.subscribe((state) => {
+  //   // TODO Remove this
+  //   // Simple state logging
+  //   // console.log("XState state: ", state.value);
+  //   // });
+  // }, [service]);
 
   return (
     <>
