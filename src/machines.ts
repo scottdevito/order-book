@@ -118,13 +118,18 @@ export const orderBookMachine = Machine<
             bids: (context, event: IUpdateOrdersEvent) => {
               // If the asks event [] is not empty
               if (event.bids) {
+                // TODO
                 // Return an array that's a mix of the old asks and new asks
-                //  If the same price comes in, replace the old one (new Set, what order does it replace?)
-                const newBidsArr = [...context.bids, ...event.bids]
-                  //  Filter out prices of Size 0
-                  .filter((order) => order[1] > 0);
 
-                // and only take the top  15 of bids (Buys)
+                // Search for price matches
+                //   If it matches and the new amount value is 0, throw both of them out - immer
+                //   If it matches and the new amount value isn't 0, throw the old one out and put the new one in
+
+                // Only take the top  15 of bids (Buys) - but make sure there's at least 15 in there
+
+                const newBidsArr = [...context.bids, ...event.bids].filter(
+                  (order) => order[1] > 0
+                );
 
                 return newBidsArr.length > 15
                   ? [...newBidsArr].slice(-15)

@@ -1,18 +1,30 @@
 import * as React from "react";
 import styled from "styled-components";
 import { responsiveSizes } from "../../../consts";
-import { OrderBookRowsData } from "../order-book/order-book-types";
+import {
+  DebouncedFunc,
+  OrderBookRowsData,
+} from "../order-book/order-book-types";
 
 export interface OrderBookSideProps {
   isSellSide: boolean;
   isMobileScreen: boolean;
   renderBookColumns: (columnNames: Array<string>) => Array<React.ReactElement>;
   columnNames: Array<string>;
-  renderLevelRows: (
-    rowData: OrderBookRowsData,
-    isSellSide: boolean,
-    isMobileScreen: boolean
-  ) => Array<React.ReactElement>;
+  renderSellSideLevelRows?:
+    | DebouncedFunc<
+        (
+          rowData: OrderBookRowsData,
+          isMobileScreen: boolean
+        ) => Array<React.ReactElement>
+      >
+    | any;
+  renderBuySideLevelRows?: DebouncedFunc<
+    (
+      rowData: OrderBookRowsData,
+      isMobileScreen: boolean
+    ) => Array<React.ReactElement>
+  >;
   rowsData: OrderBookRowsData;
 }
 
@@ -23,11 +35,11 @@ const OrderBookSide: React.FC<OrderBookSideProps> = (props) => {
         {props.renderBookColumns(props.columnNames)}
       </ColumnHeadersRowWrapper>
       <LevelsWrapper isSellSide={props.isSellSide}>
-        {props.renderLevelRows(
-          props.rowsData,
-          props.isSellSide,
-          props.isMobileScreen
-        )}
+        {props.isSellSide
+          ? props.renderSellSideLevelRows &&
+            props.renderSellSideLevelRows(props.rowsData, props.isMobileScreen)
+          : props.renderBuySideLevelRows &&
+            props.renderBuySideLevelRows(props.rowsData, props.isMobileScreen)}
       </LevelsWrapper>
     </SideWrapper>
   );
