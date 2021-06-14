@@ -1,12 +1,11 @@
 import React, { FC } from "react";
 import { OrderBookRowsData } from "../../components/order-book/order-book/order-book-types";
-import {
-  OrderBookStoreAction,
-  AvailableProductIds,
-  AvailableGroupings,
-} from "./use-order-book-store-consts";
+import { AvailableGroupings, AvailableProductIds } from "../../machines";
 
 // Context to keep track of the levels to display in the Order Book
+export enum OrderBookStoreAction {
+  HydrateOrderBookState = "hydrate_order_book_state",
+}
 
 type State = {
   asks: OrderBookRowsData;

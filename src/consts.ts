@@ -1,4 +1,4 @@
-import { AvailableGroupings } from "./contexts/use-order-book-store/use-order-book-store-consts";
+import { AvailableGroupings } from "./machines";
 
 // App-wide
 export const responsiveSizes = {

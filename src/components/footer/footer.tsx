@@ -2,18 +2,9 @@ import { useMachine } from "@xstate/react";
 import * as React from "react";
 import { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 import styled from "styled-components";
-import {
-  send,
-  Sender,
-  SingleOrArray,
-  SCXML,
-  EventData,
-  State,
-  Interpreter,
-} from "xstate";
+import { Interpreter } from "xstate";
 import { bookUi1FeedConsts } from "../../consts";
 import {
-  orderBookMachine,
   ORDER_BOOK_EVENT,
   OrderBookEvent,
   MachineContext,
