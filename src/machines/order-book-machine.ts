@@ -1,93 +1,22 @@
 import produce from "immer";
 import { assign, Machine } from "xstate";
-import {
-  OrderBookRowsData,
-  OrderData,
-} from "../components/order-book/order-book/order-book-types";
+import { OrderBookRowsData } from "../components/order-book/order-book/order-book-types";
 import { twoDimArrSort } from "../utils";
-
-export enum ORDER_BOOK {
-  "DISCONNECTED" = "disconnected",
-  "IDLE" = "idle",
-  "LOADING" = "loading",
-  "ERROR" = "error",
-}
-
-export enum ORDER_BOOK_EVENT {
-  "OPEN_CONNECTION" = "OPEN_CONNECTION",
-  "HYDRATE" = "HYDRATE",
-  "DISCONNECT" = "DISCONNECT",
-  "ERROR" = "ERROR",
-  "FETCH" = "FETCH",
-  "UPDATE_ORDERS" = "UPDATE_ORDERS",
-  "KILL" = "KILL",
-  "TOGGLE" = "TOGGLE",
-  "GROUP" = "GROUP",
-  "RESOLVE" = "RESOLVE",
-  "REJECT" = "REJECT",
-}
-
-export enum AvailableProductIds {
-  XBTUSD = "PI_XBTUSD",
-  ETHUSD = "PI_ETHUSD",
-}
-
-export type AvailableGroupings = {
-  XBTUSD: 0.5 | 1 | 2.5;
-  ETHUSD: 0.05 | 0.1 | 0.25;
-};
-
-export type MachineContext = {
-  asks: OrderBookRowsData;
-  bids: OrderBookRowsData;
-  activeGrouping: AvailableGroupings["XBTUSD"] | AvailableGroupings["ETHUSD"];
-  activeProductId: AvailableProductIds.XBTUSD | AvailableProductIds.ETHUSD;
-  hasError: boolean;
-  isLoading: boolean;
-};
-
-export interface OrderBookStateSchema {
-  states: {
-    disconnected: {};
-    loading: {};
-    idle: {};
-    error: {};
-  };
-}
-
-type IHydrateEvent = {
-  type: ORDER_BOOK_EVENT.HYDRATE;
-  asks: OrderBookRowsData;
-  bids: OrderBookRowsData;
-};
-
-type IUpdateOrdersEvent = {
-  type: ORDER_BOOK_EVENT.UPDATE_ORDERS;
-  asks: OrderBookRowsData;
-  bids: OrderBookRowsData;
-};
-
-export type OrderBookEvent =
-  | { type: ORDER_BOOK_EVENT.OPEN_CONNECTION }
-  | IHydrateEvent
-  | { type: ORDER_BOOK_EVENT.DISCONNECT }
-  | { type: ORDER_BOOK_EVENT.ERROR }
-  | { type: ORDER_BOOK_EVENT.FETCH }
-  | IUpdateOrdersEvent
-  | { type: ORDER_BOOK_EVENT.KILL }
-  | { type: ORDER_BOOK_EVENT.TOGGLE }
-  | { type: ORDER_BOOK_EVENT.GROUP }
-  | { type: ORDER_BOOK_EVENT.RESOLVE }
-  | { type: ORDER_BOOK_EVENT.REJECT };
-
-// Slice functions to maintain slice rule consistency for different order types
-const asksIngressSlice = (asksToSlice: OrderData[]) => {
-  return asksToSlice.slice(-20);
-};
-
-const bidsIngressSlice = (bidsToSlice: OrderData[]) => {
-  return bidsToSlice.slice(0, 20);
-};
+import {
+  MachineContext,
+  OrderBookStateSchema,
+  OrderBookEvent,
+  ORDER_BOOK,
+  AvailableProductIds,
+  IGroupEvent,
+  IUpdateOrdersEvent,
+  IHydrateEvent,
+} from "./order-book-machine-types";
+import {
+  asksIngressSlice,
+  groupByActiveGrouping,
+  bidsIngressSlice,
+} from "./order-book-machine-utils";
 
 export const orderBookMachine = Machine<
   MachineContext,
@@ -116,7 +45,21 @@ export const orderBookMachine = Machine<
         FETCH: ORDER_BOOK.LOADING,
         KILL: ORDER_BOOK.ERROR,
         TOGGLE: ORDER_BOOK.LOADING,
-        GROUP: ORDER_BOOK.LOADING,
+        GROUP: {
+          actions: assign({
+            activeGrouping: (context, event: IGroupEvent) => {
+              return event.activeGrouping;
+            },
+            asks: (context, event: IGroupEvent) => {
+              // Clear out previously grouped orders in the context
+              return [];
+            },
+            bids: (context, event: IGroupEvent) => {
+              // Clear out previously grouped orders in the context
+              return [];
+            },
+          }),
+        },
         UPDATE_ORDERS: {
           actions: assign({
             asks: (context, event: IUpdateOrdersEvent) => {
@@ -124,10 +67,13 @@ export const orderBookMachine = Machine<
               if (!!event?.asks && event.asks.length > 0) {
                 // Return an array that's a mix of the updated old asks and new asks
                 const asksArrWithUpdates = produce(
-                  context.asks,
+                  groupByActiveGrouping(context.asks, context.activeGrouping),
                   (draft: OrderBookRowsData) => {
                     // For each incoming ask in the event, search for a matching ask in the context (by price)
-                    event.asks.map((ask) => {
+                    groupByActiveGrouping(
+                      event.asks,
+                      context.activeGrouping
+                    ).map((ask) => {
                       const existingAskIndex = draft.findIndex(
                         (possibleExistingAsk) =>
                           possibleExistingAsk[0] === ask[0]
@@ -163,11 +109,12 @@ export const orderBookMachine = Machine<
                 const sortedNewAsksArrWithoutZeros =
                   newAsksArrWithoutZeros.sort(twoDimArrSort);
 
-                // For sells, only take the bottom 20 asks
+                // For sells, only take the bottom 30 asks
                 // we need 15 but we want a buffer to ensure there's at least 15 showing in the UI
-                if (sortedNewAsksArrWithoutZeros.length > 20) {
+                if (sortedNewAsksArrWithoutZeros.length > 30) {
                   const bufferedAndSortedNewAsksArrWithoutZeros =
                     asksIngressSlice(sortedNewAsksArrWithoutZeros);
+
                   return bufferedAndSortedNewAsksArrWithoutZeros;
                 } else {
                   return sortedNewAsksArrWithoutZeros;
@@ -181,10 +128,13 @@ export const orderBookMachine = Machine<
               if (!!event?.bids && event.bids.length > 0) {
                 // Return an array that's a mix of the updated old bids and new bids
                 const bidsArrWithUpdates = produce(
-                  context.bids,
+                  groupByActiveGrouping(context.bids, context.activeGrouping),
                   (draft: OrderBookRowsData) => {
                     // For each incoming bid in the event, search for a matching bid in the context (by price)
-                    event.bids.map((bid) => {
+                    groupByActiveGrouping(
+                      event.bids,
+                      context.activeGrouping
+                    ).map((bid) => {
                       const existingBidIndex = draft.findIndex(
                         (possibleExistingBid) =>
                           possibleExistingBid[0] === bid[0]
@@ -220,11 +170,12 @@ export const orderBookMachine = Machine<
                 const sortedNewBidsArrWithoutZeros =
                   newBidsArrWithoutZeros.sort(twoDimArrSort);
 
-                // For buys, only take the top 20 bids
+                // For buys, only take the top 30 bids
                 // we need 15 but we want a buffer to ensure there's at least 15 showing in the UI
-                if (sortedNewBidsArrWithoutZeros.length > 20) {
+                if (sortedNewBidsArrWithoutZeros.length > 30) {
                   const bufferedAndSortedNewBidsArrWithoutZeros =
                     bidsIngressSlice(sortedNewBidsArrWithoutZeros);
+
                   return bufferedAndSortedNewBidsArrWithoutZeros;
                 } else {
                   return sortedNewBidsArrWithoutZeros;

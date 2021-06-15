@@ -4,6 +4,10 @@ import { colors } from "../../styles/styles";
 import useDropdownMenu from "react-accessible-dropdown-menu-hook";
 import { bookUi1FeedConsts, groupingOptions } from "../../consts";
 import { useOrderBookMachineSend } from "../../contexts/useOrderBookMachineSend";
+import {
+  AvailableGroupings,
+  ORDER_BOOK_EVENT,
+} from "../../machines/order-book-machine-types";
 
 export interface HeaderProps {}
 
@@ -12,10 +16,6 @@ const Header: React.FC<HeaderProps> = () => {
 
   const { buttonProps, itemProps, isOpen, setIsOpen } = useDropdownMenu(3);
 
-  const [activeGroupingOptions, setActiveGroupingOptions] = React.useState<
-    Array<number>
-  >(groupingOptions[bookUi1FeedConsts.productIds.xbtusd]);
-
   const [activeGrouping, setActiveGrouping] = React.useState<number>(0);
 
   const handleChangeGroupingClick = (event: React.MouseEvent, idx: number) => {
@@ -23,10 +23,17 @@ const Header: React.FC<HeaderProps> = () => {
 
     setActiveGrouping(idx);
     setIsOpen(false);
+
+    send({
+      type: ORDER_BOOK_EVENT.GROUP,
+      activeGrouping: groupingOptions[bookUi1FeedConsts.productIds.xbtusd][
+        idx
+      ] as AvailableGroupings["XBTUSD"],
+    });
   };
 
   const renderGroupingMenuListItems = (
-    activeGroupingOptions: Array<number>
+    activeGroupingOptions: [AvailableGroupings["XBTUSD"]]
   ) => {
     return activeGroupingOptions.map((listItem, idx) => {
       return (
@@ -49,10 +56,16 @@ const Header: React.FC<HeaderProps> = () => {
       <Title>Order Book</Title>
       <GroupingSelectWrapper>
         <GroupingSelect {...buttonProps}>
-          {`Group ${activeGroupingOptions[activeGrouping]}`}
+          {`Group ${
+            groupingOptions[bookUi1FeedConsts.productIds.xbtusd][activeGrouping]
+          }`}
         </GroupingSelect>
         <GroupingMenu className={isOpen ? "visible" : ""} role="menu">
-          {renderGroupingMenuListItems(activeGroupingOptions)}
+          {renderGroupingMenuListItems(
+            groupingOptions[bookUi1FeedConsts.productIds.xbtusd] as [
+              AvailableGroupings["XBTUSD"]
+            ]
+          )}
         </GroupingMenu>
       </GroupingSelectWrapper>
     </HeaderWrapper>
