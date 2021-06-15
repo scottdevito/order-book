@@ -3,10 +3,13 @@ import styled from "styled-components";
 import { colors } from "../../styles/styles";
 import useDropdownMenu from "react-accessible-dropdown-menu-hook";
 import { bookUi1FeedConsts, groupingOptions } from "../../consts";
+import { useOrderBookMachineSend } from "../../contexts/useOrderBookMachineSend";
 
 export interface HeaderProps {}
 
 const Header: React.FC<HeaderProps> = () => {
+  const send = useOrderBookMachineSend();
+
   const { buttonProps, itemProps, isOpen, setIsOpen } = useDropdownMenu(3);
 
   const [activeGroupingOptions, setActiveGroupingOptions] = React.useState<

@@ -3,8 +3,8 @@ import { assign, Machine } from "xstate";
 import {
   OrderBookRowsData,
   OrderData,
-} from "./components/order-book/order-book/order-book-types";
-import { twoDimArrSort } from "./utils";
+} from "../components/order-book/order-book/order-book-types";
+import { twoDimArrSort } from "../utils";
 
 export enum ORDER_BOOK {
   "DISCONNECTED" = "disconnected",

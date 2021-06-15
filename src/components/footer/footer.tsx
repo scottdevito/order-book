@@ -1,28 +1,18 @@
-import { useMachine } from "@xstate/react";
 import * as React from "react";
 import { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 import styled from "styled-components";
-import { Interpreter } from "xstate";
 import { bookUi1FeedConsts } from "../../consts";
-import {
-  ORDER_BOOK_EVENT,
-  OrderBookEvent,
-  MachineContext,
-  OrderBookStateSchema,
-} from "../../machines";
+import { useOrderBookMachineSend } from "../../contexts/useOrderBookMachineSend";
+import { ORDER_BOOK_EVENT } from "../../machines/order-book-machine";
 import { colors } from "../../styles/styles";
 
 export interface FooterProps {
-  orderBookMachineSend: Interpreter<
-    MachineContext,
-    OrderBookStateSchema,
-    OrderBookEvent
-  >["send"];
-  // orderBookMachineSend: Sender<SingleOrArray<SCXML.Event<OrderBookEvent>>>;
   cfSocketSendJsonMessage: SendJsonMessage;
 }
 
 const Footer: React.FC<FooterProps> = (props) => {
+  const send = useOrderBookMachineSend();
+
   // TODO Change to throw an error instead of disconnect
   const handleKillFeed = () => {
     try {
@@ -31,9 +21,9 @@ const Footer: React.FC<FooterProps> = (props) => {
         feed: bookUi1FeedConsts.name,
         product_ids: [bookUi1FeedConsts.productIds.xbtusd],
       });
-      props.orderBookMachineSend({ type: ORDER_BOOK_EVENT.DISCONNECT });
+      send({ type: ORDER_BOOK_EVENT.DISCONNECT });
     } catch (error) {
-      props.orderBookMachineSend({ type: ORDER_BOOK_EVENT.ERROR });
+      send({ type: ORDER_BOOK_EVENT.ERROR });
     }
   };
 

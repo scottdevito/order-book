@@ -1,4 +1,4 @@
-import { AvailableGroupings } from "./machines";
+import { AvailableGroupings } from "./machines/order-book-machine";
 
 // App-wide
 export const responsiveSizes = {
@@ -21,6 +21,7 @@ export const bookUi1FeedConsts = {
 
 // Order Book
 export const columnNames = ["Price", "Size", "Total"];
+
 export const groupingOptions: {
   [index: string]:
     | Array<AvailableGroupings["ETHUSD"]>

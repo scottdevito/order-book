@@ -8,7 +8,7 @@ import buyDepthVisualizerBg from "../../../assets/images/buyDepthVisualizerBg.sv
 import { columnNames, responsiveSizes } from "../../../consts";
 import { useMediaQuery } from "../../custom-hooks/use-media-query";
 import { State } from "xstate";
-import { ORDER_BOOK } from "../../../machines";
+import { ORDER_BOOK } from "../../../machines/order-book-machine";
 import debounce from "lodash.debounce";
 import { twoDimArrSort } from "../../../utils";
 
@@ -220,6 +220,7 @@ const OrderBook: React.FC<OrderBookProps> = (props) => {
   const sellSideColumnNames = isMobileScreen
     ? columnNames
     : [...columnNames].reverse();
+
   const buySideColumnNames = isMobileScreen ? columnNames : columnNames;
 
   return (

@@ -2,15 +2,20 @@ import * as React from "react";
 import OrderBook from "../../components/order-book/order-book/order-book";
 import useWebSocket from "react-use-websocket";
 import { bookUi1FeedConsts } from "../../consts";
-import { useMachine } from "@xstate/react";
-import { orderBookMachine, ORDER_BOOK, ORDER_BOOK_EVENT } from "../../machines";
+import {
+  ORDER_BOOK,
+  ORDER_BOOK_EVENT,
+} from "../../machines/order-book-machine";
 import Header from "../../components/header/header";
 import Footer from "../../components/footer/footer";
+import { useOrderBookMachineSend } from "../../contexts/useOrderBookMachineSend";
+import { useOrderBookMachineState } from "../../contexts/useOrderBookMachineState";
 
 export interface OrderBookContainerProps {}
 
 const OrderBookContainer: React.FC<OrderBookContainerProps> = () => {
-  const [state, send, service] = useMachine(orderBookMachine);
+  const send = useOrderBookMachineSend();
+  const state = useOrderBookMachineState();
 
   // Configure WS connection to Crypto Facilities
   const { REACT_APP_CF_SOCKET_URL } = process.env;
@@ -76,13 +81,7 @@ const OrderBookContainer: React.FC<OrderBookContainerProps> = () => {
         });
       }
     }
-  }, [
-    send,
-    lastJsonMessage,
-    state.context.asks,
-    state.context.bids,
-    state.matches,
-  ]);
+  }, [send, lastJsonMessage, state]);
 
   // React.useEffect(() => {
   //   // const subscription = service.subscribe((state) => {
@@ -100,10 +99,7 @@ const OrderBookContainer: React.FC<OrderBookContainerProps> = () => {
         buySideRowsData={state.context.bids}
         machineState={state}
       />
-      <Footer
-        orderBookMachineSend={send}
-        cfSocketSendJsonMessage={sendJsonMessage}
-      />
+      <Footer cfSocketSendJsonMessage={sendJsonMessage} />
     </>
   );
 };

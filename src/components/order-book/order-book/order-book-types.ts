@@ -1,3 +1,10 @@
+import { Interpreter, State } from "xstate";
+import {
+  OrderBookEvent,
+  MachineContext,
+  OrderBookStateSchema,
+} from "../../../machines/order-book-machine";
+
 /**
  * How much currency it costs per unit
  */
@@ -44,3 +51,19 @@ export interface DebouncedFunc<T extends (...args: any[]) => any> {
    */
   flush(): ReturnType<T> | undefined;
 }
+
+export type OrderBookMachineSend = Interpreter<
+  MachineContext,
+  OrderBookStateSchema,
+  OrderBookEvent
+>["send"];
+
+export type OrderBookMachineState = State<
+  MachineContext,
+  OrderBookEvent,
+  any,
+  {
+    value: any;
+    context: MachineContext;
+  }
+>;
