@@ -1,4 +1,4 @@
-import { AvailableGroupings } from "./machines/order-book-machine";
+import { AvailableGroupings } from "./machines/order-book-machine-types";
 
 // App-wide
 export const responsiveSizes = {

@@ -1,9 +1,9 @@
 import { Interpreter, State } from "xstate";
 import {
-  OrderBookEvent,
   MachineContext,
   OrderBookStateSchema,
-} from "../../../machines/order-book-machine";
+  OrderBookEvent,
+} from "../../../machines/order-book-machine-types";
 
 /**
  * How much currency it costs per unit

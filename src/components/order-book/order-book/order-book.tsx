@@ -8,11 +8,10 @@ import buyDepthVisualizerBg from "../../../assets/images/buyDepthVisualizerBg.sv
 import { columnNames, responsiveSizes } from "../../../consts";
 import { useMediaQuery } from "../../custom-hooks/use-media-query";
 import { State } from "xstate";
-import { ORDER_BOOK } from "../../../machines/order-book-machine";
 import debounce from "lodash.debounce";
 import { twoDimArrSort } from "../../../utils";
+import { ORDER_BOOK } from "../../../machines/order-book-machine-types";
 
-const debounceInterval = 500;
 export interface OrderBookProps {
   sellSideRowsData: OrderBookRowsData;
   buySideRowsData: OrderBookRowsData;
@@ -43,6 +42,9 @@ const finalTotal = (sortedRowsData: OrderBookRowsData) => {
       }, 0)
     : 0;
 };
+
+// Debounce const for renderRows
+const debounceInterval = 500;
 
 /**
  * Function to render Sell side Order Book level rows

@@ -3,7 +3,7 @@ import { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 import styled from "styled-components";
 import { bookUi1FeedConsts } from "../../consts";
 import { useOrderBookMachineSend } from "../../contexts/useOrderBookMachineSend";
-import { ORDER_BOOK_EVENT } from "../../machines/order-book-machine";
+import { ORDER_BOOK_EVENT } from "../../machines/order-book-machine-types";
 import { colors } from "../../styles/styles";
 
 export interface FooterProps {

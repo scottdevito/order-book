@@ -5,7 +5,7 @@ import { bookUi1FeedConsts } from "../../consts";
 import {
   ORDER_BOOK,
   ORDER_BOOK_EVENT,
-} from "../../machines/order-book-machine";
+} from "../../machines/order-book-machine-types";
 import Header from "../../components/header/header";
 import Footer from "../../components/footer/footer";
 import { useOrderBookMachineSend } from "../../contexts/useOrderBookMachineSend";
@@ -87,9 +87,9 @@ const OrderBookContainer: React.FC<OrderBookContainerProps> = () => {
   //   // const subscription = service.subscribe((state) => {
   //   // TODO Remove this
   //   // Simple state logging
-  //   // console.log("XState state: ", state.value);
+  //   console.log("XState state: ", state.value);
   //   // });
-  // }, [service]);
+  // }, [state]);
 
   return (
     <>
