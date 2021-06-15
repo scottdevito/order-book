@@ -18,13 +18,13 @@ describe("Order Book", () => {
     const { queryByText, rerender } = render(<OrderBook {...props} />);
 
     // Expect the final left side total to exist as shown in the mockup
-    expect(queryByText("440165")).toBeTruthy();
+    expect(queryByText("440,165")).toBeTruthy();
 
     // Re-render and expect the final right side total to exist as shown in the mockup
     rerender(<OrderBook {...props} />);
 
     // Expect the final right side total to exist as shown in the mockup
-    expect(queryByText("278747")).toBeTruthy();
+    expect(queryByText("278,747")).toBeTruthy();
   });
 
   test("Buy and Sell sides can render without data", () => {

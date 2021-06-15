@@ -1,6 +1,10 @@
 import { render, cleanup, screen } from "@testing-library/react";
 import OrderBookSide from "./order-book-side";
-import { renderBookColumns, renderLevelRows } from "../order-book/order-book";
+import {
+  renderBookColumns,
+  renderSellSideLevelRows,
+  renderBuySideLevelRows,
+} from "../order-book/order-book";
 import {
   mockSellSideRowsData,
   mockBuySideRowsData,
@@ -14,7 +18,7 @@ const buySideColumnNames = [...sellSideColumnNames].reverse();
 const sellSideProps = {
   renderBookColumns: renderBookColumns,
   columnNames: sellSideColumnNames,
-  renderLevelRows: renderLevelRows,
+  renderSellSideLevelRows: renderSellSideLevelRows,
   rowsData: mockSellSideRowsData,
   isSellSide: true,
   isMobileScreen: false,
@@ -23,7 +27,7 @@ const sellSideProps = {
 const buySideProps = {
   renderBookColumns: renderBookColumns,
   columnNames: buySideColumnNames,
-  renderLevelRows: renderLevelRows,
+  renderBuySideLevelRows: renderBuySideLevelRows,
   rowsData: mockBuySideRowsData,
   isSellSide: false,
   isMobileScreen: false,

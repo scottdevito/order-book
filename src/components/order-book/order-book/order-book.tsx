@@ -12,7 +12,7 @@ import { ORDER_BOOK } from "../../../machines";
 import debounce from "lodash.debounce";
 import { twoDimArrSort } from "../../../utils";
 
-const debounceInterval = 1000;
+const debounceInterval = 500;
 export interface OrderBookProps {
   sellSideRowsData: OrderBookRowsData;
   buySideRowsData: OrderBookRowsData;
@@ -50,11 +50,19 @@ const finalTotal = (sortedRowsData: OrderBookRowsData) => {
  * @param isMobileScreen
  * @returns An array of rows as React elements
  */
-const renderSellSideLevelRows = debounce(
+export const renderSellSideLevelRows = debounce(
   (rowsData: OrderBookRowsData, isMobileScreen: boolean) => {
+    // Display the bottom 15 of the Sell rows
+    const maxNumberOfSellRowsToDisplayData = rowsData.slice(-15);
+
+    /**
+     *  Sort by price based on side/mobile screen
+     *    Sell side => always sort high-to-low
+     *    Buy side => desktop sort low-to-high, mobile sort high-to-low
+     */
     const sortedRowsData = isMobileScreen
-      ? [...rowsData].sort(twoDimArrSort).reverse()
-      : [...rowsData].sort(twoDimArrSort).reverse();
+      ? [...maxNumberOfSellRowsToDisplayData].sort(twoDimArrSort).reverse()
+      : [...maxNumberOfSellRowsToDisplayData].sort(twoDimArrSort).reverse();
 
     // Keep track of the total level as we make our way through the rows
     let runningTotal = 0;
@@ -142,12 +150,17 @@ const renderSellSideLevelRows = debounce(
  */
 export const renderBuySideLevelRows = debounce(
   (rowsData: OrderBookRowsData, isMobileScreen: boolean) => {
+    // Display the top 15 of the Buy rows
+    const maxNumberOfBuyRowsToDisplayData = rowsData.slice(0, 15);
+
     /**
      *  Sort by price based on side/mobile screen
      *    Sell side => always sort high-to-low
      *    Buy side => desktop sort low-to-high, mobile sort high-to-low
      */
-    const sortedRowsData = [...rowsData].sort(twoDimArrSort);
+    const sortedRowsData = [...maxNumberOfBuyRowsToDisplayData].sort(
+      twoDimArrSort
+    );
 
     // Keep track of the total level as we make our way through the rows
     let runningTotal = 0;
