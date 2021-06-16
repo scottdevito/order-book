@@ -6,7 +6,6 @@ import {
   ORDER_BOOK,
   ORDER_BOOK_EVENT,
 } from "../../machines/order-book-machine-types";
-import Header from "../../components/header/header";
 import Footer from "../../components/footer/footer";
 import { useOrderBookMachineSend } from "../../contexts/useOrderBookMachineSend";
 import { useOrderBookMachineState } from "../../contexts/useOrderBookMachineState";
@@ -41,10 +40,7 @@ const OrderBookContainerXbt: React.FC<OrderBookContainerXbtProps> = () => {
         send({ type: ORDER_BOOK_EVENT.ERROR });
       }
     },
-    onClose: () => {
-      console.log("Connection closed");
-      send({ type: ORDER_BOOK_EVENT.DISCONNECT });
-    },
+
     onError: () => {
       console.error("Error connecting to CF");
       send({ type: ORDER_BOOK_EVENT.ERROR });

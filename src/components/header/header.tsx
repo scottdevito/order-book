@@ -4,6 +4,7 @@ import { colors } from "../../styles/styles";
 import useDropdownMenu from "react-accessible-dropdown-menu-hook";
 import { bookUi1FeedConsts, groupingOptions } from "../../consts";
 import { useOrderBookMachineSend } from "../../contexts/useOrderBookMachineSend";
+import { useOrderBookMachineState } from "../../contexts/useOrderBookMachineState";
 import {
   AvailableGroupings,
   ORDER_BOOK_EVENT,
@@ -13,6 +14,7 @@ export interface HeaderProps {}
 
 const Header: React.FC<HeaderProps> = () => {
   const send = useOrderBookMachineSend();
+  const state = useOrderBookMachineState();
 
   const { buttonProps, itemProps, isOpen, setIsOpen } = useDropdownMenu(3);
 
@@ -33,7 +35,9 @@ const Header: React.FC<HeaderProps> = () => {
   };
 
   const renderGroupingMenuListItems = (
-    activeGroupingOptions: [AvailableGroupings["XBTUSD"]]
+    activeGroupingOptions:
+      | [AvailableGroupings["XBTUSD"]]
+      | [AvailableGroupings["ETHUSD"]]
   ) => {
     return activeGroupingOptions.map((listItem, idx) => {
       return (
@@ -51,21 +55,28 @@ const Header: React.FC<HeaderProps> = () => {
     });
   };
 
+  const renderDynamicGroupingOptions = () => {
+    if (
+      state?.context?.activeProductId === bookUi1FeedConsts.productIds.xbtusd
+    ) {
+      return groupingOptions[bookUi1FeedConsts.productIds.xbtusd] as [
+        AvailableGroupings["XBTUSD"]
+      ];
+    }
+    return groupingOptions[bookUi1FeedConsts.productIds.ethusd] as [
+      AvailableGroupings["ETHUSD"]
+    ];
+  };
+
   return (
     <HeaderWrapper>
       <Title>Order Book</Title>
       <GroupingSelectWrapper>
         <GroupingSelect {...buttonProps}>
-          {`Group ${
-            groupingOptions[bookUi1FeedConsts.productIds.xbtusd][activeGrouping]
-          }`}
+          {`Group ${renderDynamicGroupingOptions()[activeGrouping]}`}
         </GroupingSelect>
         <GroupingMenu className={isOpen ? "visible" : ""} role="menu">
-          {renderGroupingMenuListItems(
-            groupingOptions[bookUi1FeedConsts.productIds.xbtusd] as [
-              AvailableGroupings["XBTUSD"]
-            ]
-          )}
+          {renderGroupingMenuListItems(renderDynamicGroupingOptions())}
         </GroupingMenu>
       </GroupingSelectWrapper>
     </HeaderWrapper>
