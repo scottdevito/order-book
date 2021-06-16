@@ -1,11 +1,14 @@
 import React from "react";
 import styled from "styled-components";
 import { colors } from "../../styles/styles";
-import OrderBookContainer from "../../containers/order-book-container/order-book-container";
+import Header from "../../components/header/header";
+import OrderBookContainerXbt from "../../containers/order-book-container/order-book-container-xbt";
+import OrderBookContainerEth from "../../containers/order-book-container/order-book-container-eth";
 import { useMachine } from "@xstate/react";
 import { orderBookMachine } from "../../machines/order-book-machine";
 import { OrderBookMachineSendContext } from "../../contexts/useOrderBookMachineSend";
 import { OrderBookMachineStateContext } from "../../contexts/useOrderBookMachineState";
+import { bookUi1FeedConsts } from "../../consts";
 
 function App() {
   const [state, send] = useMachine(orderBookMachine);
@@ -14,7 +17,15 @@ function App() {
     <AppWrapper>
       <OrderBookMachineSendContext.Provider value={send}>
         <OrderBookMachineStateContext.Provider value={state}>
-          <OrderBookContainer />
+          <>
+            <Header />
+            {state.context.activeProductId ===
+            bookUi1FeedConsts.productIds.ethusd ? (
+              <OrderBookContainerEth />
+            ) : (
+              <OrderBookContainerXbt />
+            )}
+          </>
         </OrderBookMachineStateContext.Provider>
       </OrderBookMachineSendContext.Provider>
     </AppWrapper>

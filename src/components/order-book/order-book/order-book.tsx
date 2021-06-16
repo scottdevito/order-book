@@ -47,7 +47,7 @@ const finalTotal = (sortedRowsData: OrderBookRowsData) => {
 const debounceInterval = 500;
 
 /**
- * Function to render Sell side Order Book level rows
+ * Function to render Sell side Order Book level rows (split out from Buy side so they can be debounced independently)
  * @param rowsData Array of [size, price] that represents all of the data for the rows
  * @param isMobileScreen
  * @returns An array of rows as React elements
@@ -58,13 +58,13 @@ export const renderSellSideLevelRows = debounce(
     const maxNumberOfSellRowsToDisplayData = rowsData.slice(-15);
 
     /**
-     *  Sort by price based on side/mobile screen
+     *  Sort by price
      *    Sell side => always sort high-to-low
      *    Buy side => desktop sort low-to-high, mobile sort high-to-low
      */
-    const sortedRowsData = isMobileScreen
-      ? [...maxNumberOfSellRowsToDisplayData].sort(twoDimArrSort).reverse()
-      : [...maxNumberOfSellRowsToDisplayData].sort(twoDimArrSort).reverse();
+    const sortedRowsData = [...maxNumberOfSellRowsToDisplayData].sort(
+      twoDimArrSort
+    );
 
     // Keep track of the total level as we make our way through the rows
     let runningTotal = 0;
@@ -145,7 +145,7 @@ export const renderSellSideLevelRows = debounce(
 );
 
 /**
- * Function to render Buy side Order Book level rows
+ * Function to render Buy side Order Book level rows (split out from Sell side so they can be debounced independently)
  * @param rowsData Array of [size, price] that represents all of the data for the rows
  * @param isMobileScreen
  * @returns An array of rows as React elements
@@ -156,13 +156,13 @@ export const renderBuySideLevelRows = debounce(
     const maxNumberOfBuyRowsToDisplayData = rowsData.slice(0, 15);
 
     /**
-     *  Sort by price based on side/mobile screen
+     *  Sort by price
      *    Sell side => always sort high-to-low
      *    Buy side => desktop sort low-to-high, mobile sort high-to-low
      */
-    const sortedRowsData = [...maxNumberOfBuyRowsToDisplayData].sort(
-      twoDimArrSort
-    );
+    const sortedRowsData = [...maxNumberOfBuyRowsToDisplayData]
+      .sort(twoDimArrSort)
+      .reverse();
 
     // Keep track of the total level as we make our way through the rows
     let runningTotal = 0;

@@ -11,9 +11,9 @@ import Footer from "../../components/footer/footer";
 import { useOrderBookMachineSend } from "../../contexts/useOrderBookMachineSend";
 import { useOrderBookMachineState } from "../../contexts/useOrderBookMachineState";
 
-export interface OrderBookContainerProps {}
+export interface OrderBookContainerEthProps {}
 
-const OrderBookContainer: React.FC<OrderBookContainerProps> = () => {
+const OrderBookContainerEth: React.FC<OrderBookContainerEthProps> = () => {
   const send = useOrderBookMachineSend();
   const state = useOrderBookMachineState();
 
@@ -27,7 +27,7 @@ const OrderBookContainer: React.FC<OrderBookContainerProps> = () => {
     // readyState,
   } = useWebSocket(socketUrl, {
     onOpen: () => {
-      console.log("Connection opened");
+      console.log("Eth connection opened");
       send({ type: ORDER_BOOK_EVENT.OPEN_CONNECTION });
 
       try {
@@ -35,7 +35,7 @@ const OrderBookContainer: React.FC<OrderBookContainerProps> = () => {
         sendJsonMessage({
           event: bookUi1FeedConsts.events.subscribe,
           feed: bookUi1FeedConsts.name,
-          product_ids: [bookUi1FeedConsts.productIds.xbtusd],
+          product_ids: [bookUi1FeedConsts.productIds.ethusd],
         });
       } catch (error) {
         send({ type: ORDER_BOOK_EVENT.ERROR });
@@ -65,11 +65,8 @@ const OrderBookContainer: React.FC<OrderBookContainerProps> = () => {
 
   // Hydrate the store
   React.useEffect(() => {
-    // If the state isn't idle and there isn't any data in the store, check the last message for a snapshot to be used for hydration
-    if (
-      (!state.matches(ORDER_BOOK.IDLE) && state?.context?.asks?.length === 0) ||
-      state?.context?.bids?.length === 0
-    ) {
+    // If the state is loading, check the last message for a snapshot to be used for hydration
+    if (state.matches(ORDER_BOOK.LOADING)) {
       if (
         !!lastJsonMessage &&
         lastJsonMessage.feed === bookUi1FeedConsts.snapshot
@@ -93,7 +90,6 @@ const OrderBookContainer: React.FC<OrderBookContainerProps> = () => {
 
   return (
     <>
-      <Header />
       <OrderBook
         sellSideRowsData={state.context.asks}
         buySideRowsData={state.context.bids}
@@ -104,4 +100,4 @@ const OrderBookContainer: React.FC<OrderBookContainerProps> = () => {
   );
 };
 
-export default OrderBookContainer;
+export default OrderBookContainerEth;

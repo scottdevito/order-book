@@ -3,6 +3,7 @@ import { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 import styled from "styled-components";
 import { bookUi1FeedConsts } from "../../consts";
 import { useOrderBookMachineSend } from "../../contexts/useOrderBookMachineSend";
+import { useOrderBookMachineState } from "../../contexts/useOrderBookMachineState";
 import { ORDER_BOOK_EVENT } from "../../machines/order-book-machine-types";
 import { colors } from "../../styles/styles";
 
@@ -12,6 +13,7 @@ export interface FooterProps {
 
 const Footer: React.FC<FooterProps> = (props) => {
   const send = useOrderBookMachineSend();
+  const state = useOrderBookMachineState();
 
   // TODO Change to throw an error instead of disconnect
   const handleKillFeed = () => {
@@ -21,15 +23,36 @@ const Footer: React.FC<FooterProps> = (props) => {
         feed: bookUi1FeedConsts.name,
         product_ids: [bookUi1FeedConsts.productIds.xbtusd],
       });
+
       send({ type: ORDER_BOOK_EVENT.DISCONNECT });
     } catch (error) {
       send({ type: ORDER_BOOK_EVENT.ERROR });
     }
   };
 
+  const handleToggleFeed = () => {
+    // Unsubscribe from XBT and subscribe to ETH
+    if (
+      state?.context?.activeProductId === bookUi1FeedConsts.productIds.xbtusd
+    ) {
+      send({
+        type: ORDER_BOOK_EVENT.TOGGLE,
+        activeProductId: bookUi1FeedConsts.productIds.ethusd,
+      });
+    }
+
+    // Unsubscribe from ETH and subscribe to XBT
+    send({
+      type: ORDER_BOOK_EVENT.TOGGLE,
+      activeProductId: bookUi1FeedConsts.productIds.xbtusd,
+    });
+  };
+
   return (
     <FooterWrapper>
-      <ToggleFeedButton>Toggle Feed</ToggleFeedButton>
+      <ToggleFeedButton onClick={handleToggleFeed}>
+        Toggle Feed
+      </ToggleFeedButton>
       <KillFeedButton onClick={handleKillFeed}>Kill Feed</KillFeedButton>
     </FooterWrapper>
   );

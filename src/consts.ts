@@ -1,4 +1,7 @@
-import { AvailableGroupings } from "./machines/order-book-machine-types";
+import {
+  AvailableGroupings,
+  AvailableProductIds,
+} from "./machines/order-book-machine-types";
 
 // App-wide
 export const responsiveSizes = {
@@ -14,8 +17,8 @@ export const bookUi1FeedConsts = {
     unsubscribe: "unsubscribe",
   },
   productIds: {
-    xbtusd: "PI_XBTUSD",
-    ethusd: "PI_ETHUSD",
+    xbtusd: AvailableProductIds.XBTUSD,
+    ethusd: AvailableProductIds.ETHUSD,
   },
 };
 

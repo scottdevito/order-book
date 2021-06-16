@@ -66,15 +66,20 @@ export type IGroupEvent = {
   activeGrouping: AvailableGroupings["XBTUSD"] | AvailableGroupings["ETHUSD"];
 };
 
+export type IToggleEvent = {
+  type: ORDER_BOOK_EVENT.TOGGLE;
+  activeProductId: AvailableProductIds.XBTUSD | AvailableProductIds.ETHUSD;
+};
+
 export type OrderBookEvent =
-  | { type: ORDER_BOOK_EVENT.OPEN_CONNECTION }
   | IHydrateEvent
+  | IToggleEvent
+  | IUpdateOrdersEvent
+  | IGroupEvent
+  | { type: ORDER_BOOK_EVENT.OPEN_CONNECTION }
   | { type: ORDER_BOOK_EVENT.DISCONNECT }
   | { type: ORDER_BOOK_EVENT.ERROR }
   | { type: ORDER_BOOK_EVENT.FETCH }
-  | IUpdateOrdersEvent
   | { type: ORDER_BOOK_EVENT.KILL }
-  | { type: ORDER_BOOK_EVENT.TOGGLE }
-  | IGroupEvent
   | { type: ORDER_BOOK_EVENT.RESOLVE }
   | { type: ORDER_BOOK_EVENT.REJECT };

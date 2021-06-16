@@ -9,6 +9,7 @@ import {
   ORDER_BOOK,
   AvailableProductIds,
   IGroupEvent,
+  IToggleEvent,
   IUpdateOrdersEvent,
   IHydrateEvent,
 } from "./order-book-machine-types";
@@ -44,17 +45,24 @@ export const orderBookMachine = Machine<
         DISCONNECT: ORDER_BOOK.DISCONNECTED,
         FETCH: ORDER_BOOK.LOADING,
         KILL: ORDER_BOOK.ERROR,
-        TOGGLE: ORDER_BOOK.LOADING,
+        TOGGLE: {
+          target: ORDER_BOOK.LOADING,
+          actions: assign({
+            activeProductId: (_, event: IToggleEvent) => {
+              return event.activeProductId;
+            },
+          }),
+        },
         GROUP: {
           actions: assign({
             activeGrouping: (context, event: IGroupEvent) => {
               return event.activeGrouping;
             },
-            asks: (context, event: IGroupEvent) => {
+            asks: (_) => {
               // Clear out previously grouped orders in the context
               return [];
             },
-            bids: (context, event: IGroupEvent) => {
+            bids: (_) => {
               // Clear out previously grouped orders in the context
               return [];
             },
