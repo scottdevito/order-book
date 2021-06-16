@@ -27,7 +27,6 @@ const OrderBookContainerXbt: React.FC<OrderBookContainerXbtProps> = () => {
     // readyState,
   } = useWebSocket(socketUrl, {
     onOpen: () => {
-      console.log("Connection opened");
       send({ type: ORDER_BOOK_EVENT.OPEN_CONNECTION });
 
       try {
@@ -50,14 +49,12 @@ const OrderBookContainerXbt: React.FC<OrderBookContainerXbtProps> = () => {
       if (state.matches(ORDER_BOOK.IDLE)) {
         send({
           type: ORDER_BOOK_EVENT.UPDATE_ORDERS,
-          asks: lastJsonMessage.asks,
-          bids: lastJsonMessage.bids,
+          asks: !!lastJsonMessage?.asks ? lastJsonMessage.asks : [],
+          bids: !!lastJsonMessage?.bids ? lastJsonMessage.bids : [],
         });
       }
     },
-    // Will attempt to reconnect on all close events, such as server shutting down
-    // TODO Tighten acceptable reconnect cases
-    shouldReconnect: (closeEvent) => false,
+    shouldReconnect: () => true,
   });
 
   // Hydrate the store
@@ -70,20 +67,12 @@ const OrderBookContainerXbt: React.FC<OrderBookContainerXbtProps> = () => {
       ) {
         send({
           type: ORDER_BOOK_EVENT.HYDRATE,
-          asks: lastJsonMessage.asks ? lastJsonMessage.asks : [],
-          bids: lastJsonMessage.bids ? lastJsonMessage.bids : [],
+          asks: !!lastJsonMessage.asks ? lastJsonMessage.asks : [],
+          bids: !!lastJsonMessage.bids ? lastJsonMessage.bids : [],
         });
       }
     }
   }, [send, lastJsonMessage, state]);
-
-  // React.useEffect(() => {
-  //   // const subscription = service.subscribe((state) => {
-  //   // TODO Remove this
-  //   // Simple state logging
-  //   console.log("XState state: ", state.value);
-  //   // });
-  // }, [state]);
 
   return (
     <>

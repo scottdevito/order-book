@@ -11,14 +11,12 @@ export interface OrderBookSideProps {
   isMobileScreen: boolean;
   renderBookColumns: (columnNames: Array<string>) => Array<React.ReactElement>;
   columnNames: Array<string>;
-  renderSellSideLevelRows?:
-    | DebouncedFunc<
-        (
-          rowData: OrderBookRowsData,
-          isMobileScreen: boolean
-        ) => Array<React.ReactElement>
-      >
-    | any;
+  renderSellSideLevelRows?: DebouncedFunc<
+    (
+      rowData: OrderBookRowsData,
+      isMobileScreen: boolean
+    ) => Array<React.ReactElement>
+  >;
   renderBuySideLevelRows?: DebouncedFunc<
     (
       rowData: OrderBookRowsData,
@@ -50,7 +48,7 @@ export default OrderBookSide;
 type SideWrapperProps = {
   isSellSide: boolean;
 };
-const SideWrapper = styled.div<SideWrapperProps>`
+export const SideWrapper = styled.div<SideWrapperProps>`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -72,7 +70,7 @@ const SideWrapper = styled.div<SideWrapperProps>`
 type ColumnHeadersRowWrapperProps = {
   isSellSide: boolean;
 };
-const ColumnHeadersRowWrapper = styled.div<ColumnHeadersRowWrapperProps>`
+export const ColumnHeadersRowWrapper = styled.div<ColumnHeadersRowWrapperProps>`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr;

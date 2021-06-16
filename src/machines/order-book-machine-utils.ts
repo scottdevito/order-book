@@ -4,6 +4,7 @@ import {
   OrderData,
 } from "../components/order-book/order-book/order-book-types";
 import { bookUi1FeedConsts, groupingOptions } from "../consts";
+import { twoDimArrSort } from "../utils";
 import { AvailableGroupings } from "./order-book-machine-types";
 
 // Slice functions to maintain slice rule consistency for different order types
@@ -14,6 +15,17 @@ export const asksIngressSlice = (asksToSlice: OrderBookRowsData) => {
 
 export const bidsIngressSlice = (bidsToSlice: OrderBookRowsData) => {
   return bidsToSlice.slice(0, 40);
+};
+
+// Remove zeros and sort/store bids and asks in descending order
+export const removeZeroPricesAndSortOrders = (
+  ordersArray: OrderBookRowsData
+) => {
+  return ordersArray
+    .filter((updatedOrder) => {
+      return updatedOrder[1] !== 0;
+    })
+    .sort(twoDimArrSort);
 };
 
 export const groupByActiveGrouping = (

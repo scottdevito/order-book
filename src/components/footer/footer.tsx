@@ -49,10 +49,12 @@ const Footer: React.FC<FooterProps> = (props) => {
 
   return (
     <FooterWrapper>
-      <ToggleFeedButton onClick={handleToggleFeed}>
+      <ToggleFeedButton onClick={handleToggleFeed} role="button">
         Toggle Feed
       </ToggleFeedButton>
-      <KillFeedButton onClick={handleKillFeed}>Kill Feed</KillFeedButton>
+      <KillFeedButton onClick={handleKillFeed} role="button">
+        Kill Feed
+      </KillFeedButton>
     </FooterWrapper>
   );
 };

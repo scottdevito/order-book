@@ -18,6 +18,7 @@ import {
   asksIngressSlice,
   groupByActiveGrouping,
   bidsIngressSlice,
+  removeZeroPricesAndSortOrders,
 } from "./order-book-machine-utils";
 
 export const orderBookMachine = Machine<
@@ -108,27 +109,8 @@ export const orderBookMachine = Machine<
                   }
                 );
 
-                // Clear out all incoming asks with 0 size (we've already dealt with them)
-                const newAsksArrWithoutZeros = asksArrWithUpdates.filter(
-                  (updatedAsk) => {
-                    return updatedAsk[1] !== 0;
-                  }
-                );
-
-                // Always sort/store asks and bids in descending order
-                const sortedNewAsksArrWithoutZeros =
-                  newAsksArrWithoutZeros.sort(twoDimArrSort);
-
-                // For sells, only take the bottom 30 asks
-                // we need 15 but we want a buffer to ensure there's at least 15 showing in the UI
-                // if (sortedNewAsksArrWithoutZeros.length > 30) {
-                //   const bufferedAndSortedNewAsksArrWithoutZeros =
-                //     asksIngressSlice(sortedNewAsksArrWithoutZeros);
-
-                //   return bufferedAndSortedNewAsksArrWithoutZeros;
-                // } else {
-                return sortedNewAsksArrWithoutZeros;
-                // }
+                // Clear out all incoming bids with 0 size (we've already dealt with them) and sort
+                return removeZeroPricesAndSortOrders(asksArrWithUpdates);
               }
               // Return the context asks if there aren't any incoming asks
               return context.asks;
@@ -169,18 +151,8 @@ export const orderBookMachine = Machine<
                   }
                 );
 
-                // Clear out all incoming bids with 0 size (we've already dealt with them)
-                const newBidsArrWithoutZeros = bidsArrWithUpdates.filter(
-                  (updatedBid) => {
-                    return updatedBid[1] !== 0;
-                  }
-                );
-
-                // Always sort/store bids and asks in descending order
-                const sortedNewBidsArrWithoutZeros =
-                  newBidsArrWithoutZeros.sort(twoDimArrSort);
-
-                return sortedNewBidsArrWithoutZeros;
+                // Clear out all incoming bids with 0 size (we've already dealt with them) and sort
+                return removeZeroPricesAndSortOrders(bidsArrWithUpdates);
               }
               // Return the context bids if there aren't any incoming bids
               return context.bids;

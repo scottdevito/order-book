@@ -135,10 +135,25 @@ const GroupingSelect = styled.button`
   border: none;
   padding: 0 10px;
   font-size: 14px;
-  width: 140px;
+  width: 120px;
   text-align: left;
   height: 30px;
   border-radius: 5px;
+
+  &:after {
+    content: ">";
+    font-weight: 700;
+    font-size: 14px;
+    color: ${colors.textWhite};
+    transform: rotate(90deg);
+    width: 0.8em;
+    height: 0.5em;
+    right: 13px;
+    top: 12px;
+    padding: 0 0 2px;
+    position: absolute;
+    pointer-events: none;
+  }
 
   &:hover {
     cursor: pointer;
@@ -150,9 +165,8 @@ const GroupingMenu = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-width: 100px;
-  transform: translate(0, -10px);
-
+  min-width: 84px;
+  transform: translate(0px, -10px);
   background: ${colors.selectBackgroundGray};
   padding: 0.8rem 1rem;
   border: 2px solid ${colors.backgroundPrimary};

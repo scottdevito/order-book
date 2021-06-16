@@ -1,7 +1,12 @@
 import * as React from "react";
 import styled from "styled-components";
 import { colors } from "../../../styles/styles";
-import { OrderBookRowsData, OrderData, Total } from "./order-book-types";
+import {
+  OrderBookMachineState,
+  OrderBookRowsData,
+  OrderData,
+  Total,
+} from "./order-book-types";
 import OrderBookSide from "../order-book-side/order-book-side";
 import sellDepthVisualizerBg from "../../../assets/images/sellDepthVisualizerBg.svg";
 import buyDepthVisualizerBg from "../../../assets/images/buyDepthVisualizerBg.svg";
@@ -15,12 +20,7 @@ import { ORDER_BOOK } from "../../../machines/order-book-machine-types";
 export interface OrderBookProps {
   sellSideRowsData: OrderBookRowsData;
   buySideRowsData: OrderBookRowsData;
-  machineState:
-    | State<{
-        error: boolean;
-        isLoading: boolean;
-      }>
-    | any;
+  machineState: OrderBookMachineState;
 }
 
 /**
@@ -228,7 +228,9 @@ const OrderBook: React.FC<OrderBookProps> = (props) => {
   return (
     <OrderBookWrapper>
       {!!props.machineState.matches(ORDER_BOOK.LOADING) ? (
-        <div>Loading...</div>
+        <LoadingPlaceholder>
+          <p>Loading...</p>
+        </LoadingPlaceholder>
       ) : (
         <>
           <OrderBookSide
@@ -319,4 +321,15 @@ const LevelRowItem = styled.div`
 
 const LevelRowPriceItem = styled(LevelRowItem)`
   color: ${colors.textGreen};
+`;
+
+const LoadingPlaceholder = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: ${colors.textLightGray};
+  font-weight: 70;
+  min-height: 60vh;
+  height: 60vh;
 `;
