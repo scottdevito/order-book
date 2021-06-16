@@ -12,7 +12,6 @@ import sellDepthVisualizerBg from "../../../assets/images/sellDepthVisualizerBg.
 import buyDepthVisualizerBg from "../../../assets/images/buyDepthVisualizerBg.svg";
 import { columnNames, responsiveSizes } from "../../../consts";
 import { useMediaQuery } from "../../custom-hooks/use-media-query";
-import { State } from "xstate";
 import debounce from "lodash.debounce";
 import { twoDimArrSort } from "../../../utils";
 import { ORDER_BOOK } from "../../../machines/order-book-machine-types";

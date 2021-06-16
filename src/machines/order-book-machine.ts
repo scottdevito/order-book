@@ -2,7 +2,6 @@ import produce from "immer";
 import { assign, Machine } from "xstate";
 import { OrderBookRowsData } from "../components/order-book/order-book/order-book-types";
 import { bookUi1FeedConsts, groupingOptions } from "../consts";
-import { twoDimArrSort } from "../utils";
 import {
   MachineContext,
   OrderBookStateSchema,
@@ -84,7 +83,7 @@ export const orderBookMachine = Machine<
                     groupByActiveGrouping(
                       event.asks,
                       context.activeGrouping
-                    ).map((ask) => {
+                    ).forEach((ask) => {
                       const existingAskIndex = draft.findIndex(
                         (possibleExistingAsk) =>
                           possibleExistingAsk[0] === ask[0]
@@ -126,7 +125,7 @@ export const orderBookMachine = Machine<
                     groupByActiveGrouping(
                       event.bids,
                       context.activeGrouping
-                    ).map((bid) => {
+                    ).forEach((bid) => {
                       const existingBidIndex = draft.findIndex(
                         (possibleExistingBid) =>
                           possibleExistingBid[0] === bid[0]
