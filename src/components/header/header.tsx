@@ -7,6 +7,7 @@ import { useOrderBookMachineSend } from "../../contexts/useOrderBookMachineSend"
 import { useOrderBookMachineState } from "../../contexts/useOrderBookMachineState";
 import {
   AvailableGroupings,
+  ORDER_BOOK,
   ORDER_BOOK_EVENT,
 } from "../../machines/order-book-machine-types";
 
@@ -67,6 +68,7 @@ const Header: React.FC<HeaderProps> = () => {
     });
   };
 
+  // When the productId is changed, reset the local GroupingSelect state
   React.useEffect(() => {
     setActiveGrouping(0);
   }, [state?.context?.activeProductId]);
@@ -75,7 +77,10 @@ const Header: React.FC<HeaderProps> = () => {
     <HeaderWrapper>
       <Title>Order Book</Title>
       <GroupingSelectWrapper>
-        <GroupingSelect {...buttonProps}>
+        <GroupingSelect
+          {...buttonProps}
+          disabled={!!state.matches(ORDER_BOOK.ERROR)}
+        >
           {`Group ${renderDynamicGroupingOptions()[activeGrouping]}`}
         </GroupingSelect>
         <GroupingMenu className={isOpen ? "visible" : ""} role="menu">

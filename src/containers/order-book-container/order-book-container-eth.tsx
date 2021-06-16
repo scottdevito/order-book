@@ -9,6 +9,7 @@ import {
 import Footer from "../../components/footer/footer";
 import { useOrderBookMachineSend } from "../../contexts/useOrderBookMachineSend";
 import { useOrderBookMachineState } from "../../contexts/useOrderBookMachineState";
+import ErrorBoundary from "../../components/error-boundary/error-boundary";
 
 export interface OrderBookContainerEthProps {}
 
@@ -85,12 +86,15 @@ const OrderBookContainerEth: React.FC<OrderBookContainerEthProps> = () => {
 
   return (
     <>
-      <OrderBook
-        sellSideRowsData={state.context.asks}
-        buySideRowsData={state.context.bids}
-        machineState={state}
-      />
-      <Footer cfSocketSendJsonMessage={sendJsonMessage} />
+      <ErrorBoundary>
+        <OrderBook
+          sellSideRowsData={state.context.asks}
+          buySideRowsData={state.context.bids}
+          machineState={state}
+        />
+
+        <Footer cfSocketSendJsonMessage={sendJsonMessage} />
+      </ErrorBoundary>
     </>
   );
 };

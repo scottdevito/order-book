@@ -32,8 +32,6 @@ export const orderBookMachine = Machine<
     bids: [],
     activeGrouping: groupingOptions[bookUi1FeedConsts.productIds.xbtusd][0],
     activeProductId: AvailableProductIds.XBTUSD,
-    hasError: false,
-    isLoading: false,
   },
   states: {
     [ORDER_BOOK.DISCONNECTED]: {
@@ -211,7 +209,7 @@ export const orderBookMachine = Machine<
     },
     [ORDER_BOOK.ERROR]: {
       on: {
-        FETCH: ORDER_BOOK.LOADING,
+        FETCH: ORDER_BOOK.IDLE,
       },
     },
   },

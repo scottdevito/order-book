@@ -15,19 +15,16 @@ const Footer: React.FC<FooterProps> = (props) => {
   const send = useOrderBookMachineSend();
   const state = useOrderBookMachineState();
 
-  // TODO Change to throw an error instead of disconnect
-  const handleKillFeed = () => {
-    try {
-      props.cfSocketSendJsonMessage({
-        event: bookUi1FeedConsts.events.unsubscribe,
-        feed: bookUi1FeedConsts.name,
-        product_ids: [bookUi1FeedConsts.productIds.xbtusd],
-      });
+  const [errorButtonState, setErrorButtonState] =
+    React.useState<boolean>(false);
 
-      send({ type: ORDER_BOOK_EVENT.DISCONNECT });
-    } catch (error) {
+  const handleKillFeed = () => {
+    if (errorButtonState) {
       send({ type: ORDER_BOOK_EVENT.ERROR });
     }
+
+    setErrorButtonState((prevState: boolean) => !prevState);
+    throw Error("Whoops!");
   };
 
   const handleToggleFeed = () => {

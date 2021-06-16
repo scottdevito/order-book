@@ -36,8 +36,6 @@ export type MachineContext = {
   bids: OrderBookRowsData;
   activeGrouping: AvailableGroupings["XBTUSD"] | AvailableGroupings["ETHUSD"];
   activeProductId: AvailableProductIds.XBTUSD | AvailableProductIds.ETHUSD;
-  hasError: boolean;
-  isLoading: boolean;
 };
 
 export interface OrderBookStateSchema {
