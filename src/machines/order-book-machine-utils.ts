@@ -3,6 +3,7 @@ import {
   OrderBookRowsData,
   OrderData,
 } from "../components/order-book/order-book/order-book-types";
+import { bookUi1FeedConsts, groupingOptions } from "../consts";
 import { AvailableGroupings } from "./order-book-machine-types";
 
 // Slice functions to maintain slice rule consistency for different order types
@@ -20,19 +21,24 @@ export const groupByActiveGrouping = (
   activeGrouping: AvailableGroupings["XBTUSD"] | AvailableGroupings["ETHUSD"]
 ) => {
   // Skip for the defaults because they're already grouped
-  if (activeGrouping === 0.5 || activeGrouping === 0.05) {
+  if (
+    activeGrouping ===
+      groupingOptions[bookUi1FeedConsts.productIds.xbtusd][0] ||
+    activeGrouping === groupingOptions[bookUi1FeedConsts.productIds.ethusd][0]
+  ) {
     return ordersData;
+  }
+
+  function roundToNearest(numberToRound: number, multipleToRoundTo: number) {
+    const half = multipleToRoundTo / 2;
+    return numberToRound + half - ((numberToRound + half) % multipleToRoundTo);
   }
 
   return ordersData.reduce(
     (acc: OrderBookRowsData, currentOrder: OrderData, idx: number) => {
-      const shouldBeRounded = activeGrouping % 1 === 0;
-
       // Store the first order in the acc as starting point
       if (idx === 0) {
-        const firstOrderPrice = shouldBeRounded
-          ? Math.floor(currentOrder[0])
-          : currentOrder[0];
+        const firstOrderPrice = roundToNearest(currentOrder[0], activeGrouping);
 
         return (acc = [...acc, [firstOrderPrice, currentOrder[1]]]);
       }
@@ -53,9 +59,10 @@ export const groupByActiveGrouping = (
       } else {
         // If the delta is larger, add it to the acc and move on to the next number
         // Before adding the number, see if we should round down or not
-        const roundedCurrentOrderPrice = shouldBeRounded
-          ? Math.floor(currentOrder[0])
-          : currentOrder[0];
+        const roundedCurrentOrderPrice = roundToNearest(
+          currentOrder[0],
+          activeGrouping
+        );
 
         return (acc = [...acc, [roundedCurrentOrderPrice, currentOrder[1]]]);
       }

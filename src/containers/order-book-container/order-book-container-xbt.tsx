@@ -69,8 +69,8 @@ const OrderBookContainerXbt: React.FC<OrderBookContainerXbtProps> = () => {
       ) {
         send({
           type: ORDER_BOOK_EVENT.HYDRATE,
-          asks: lastJsonMessage.asks,
-          bids: lastJsonMessage.bids,
+          asks: lastJsonMessage.asks ? lastJsonMessage.asks : [],
+          bids: lastJsonMessage.bids ? lastJsonMessage.bids : [],
         });
       }
     }

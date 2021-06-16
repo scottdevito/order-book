@@ -1,6 +1,7 @@
 import produce from "immer";
 import { assign, Machine } from "xstate";
 import { OrderBookRowsData } from "../components/order-book/order-book/order-book-types";
+import { bookUi1FeedConsts, groupingOptions } from "../consts";
 import { twoDimArrSort } from "../utils";
 import {
   MachineContext,
@@ -29,7 +30,7 @@ export const orderBookMachine = Machine<
   context: {
     asks: [],
     bids: [],
-    activeGrouping: 0.5,
+    activeGrouping: groupingOptions[bookUi1FeedConsts.productIds.xbtusd][0],
     activeProductId: AvailableProductIds.XBTUSD,
     hasError: false,
     isLoading: false,
@@ -50,6 +51,9 @@ export const orderBookMachine = Machine<
           actions: assign({
             activeProductId: (_, event: IToggleEvent) => {
               return event.activeProductId;
+            },
+            activeGrouping: (context, event: IToggleEvent) => {
+              return event.activeGrouping;
             },
           }),
         },
@@ -119,14 +123,14 @@ export const orderBookMachine = Machine<
 
                 // For sells, only take the bottom 30 asks
                 // we need 15 but we want a buffer to ensure there's at least 15 showing in the UI
-                if (sortedNewAsksArrWithoutZeros.length > 30) {
-                  const bufferedAndSortedNewAsksArrWithoutZeros =
-                    asksIngressSlice(sortedNewAsksArrWithoutZeros);
+                // if (sortedNewAsksArrWithoutZeros.length > 30) {
+                //   const bufferedAndSortedNewAsksArrWithoutZeros =
+                //     asksIngressSlice(sortedNewAsksArrWithoutZeros);
 
-                  return bufferedAndSortedNewAsksArrWithoutZeros;
-                } else {
-                  return sortedNewAsksArrWithoutZeros;
-                }
+                //   return bufferedAndSortedNewAsksArrWithoutZeros;
+                // } else {
+                return sortedNewAsksArrWithoutZeros;
+                // }
               }
               // Return the context asks if there aren't any incoming asks
               return context.asks;
@@ -178,16 +182,7 @@ export const orderBookMachine = Machine<
                 const sortedNewBidsArrWithoutZeros =
                   newBidsArrWithoutZeros.sort(twoDimArrSort);
 
-                // For buys, only take the top 30 bids
-                // we need 15 but we want a buffer to ensure there's at least 15 showing in the UI
-                if (sortedNewBidsArrWithoutZeros.length > 30) {
-                  const bufferedAndSortedNewBidsArrWithoutZeros =
-                    bidsIngressSlice(sortedNewBidsArrWithoutZeros);
-
-                  return bufferedAndSortedNewBidsArrWithoutZeros;
-                } else {
-                  return sortedNewBidsArrWithoutZeros;
-                }
+                return sortedNewBidsArrWithoutZeros;
               }
               // Return the context bids if there aren't any incoming bids
               return context.bids;

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 import styled from "styled-components";
-import { bookUi1FeedConsts } from "../../consts";
+import { bookUi1FeedConsts, groupingOptions } from "../../consts";
 import { useOrderBookMachineSend } from "../../contexts/useOrderBookMachineSend";
 import { useOrderBookMachineState } from "../../contexts/useOrderBookMachineState";
 import { ORDER_BOOK_EVENT } from "../../machines/order-book-machine-types";
@@ -38,6 +38,7 @@ const Footer: React.FC<FooterProps> = (props) => {
       send({
         type: ORDER_BOOK_EVENT.TOGGLE,
         activeProductId: bookUi1FeedConsts.productIds.ethusd,
+        activeGrouping: groupingOptions[bookUi1FeedConsts.productIds.ethusd][0],
       });
     }
 
@@ -45,6 +46,7 @@ const Footer: React.FC<FooterProps> = (props) => {
     send({
       type: ORDER_BOOK_EVENT.TOGGLE,
       activeProductId: bookUi1FeedConsts.productIds.xbtusd,
+      activeGrouping: groupingOptions[bookUi1FeedConsts.productIds.xbtusd][0],
     });
   };
 

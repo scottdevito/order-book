@@ -69,6 +69,7 @@ export type IGroupEvent = {
 export type IToggleEvent = {
   type: ORDER_BOOK_EVENT.TOGGLE;
   activeProductId: AvailableProductIds.XBTUSD | AvailableProductIds.ETHUSD;
+  activeGrouping: AvailableGroupings["XBTUSD"] | AvailableGroupings["ETHUSD"];
 };
 
 export type OrderBookEvent =

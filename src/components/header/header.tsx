@@ -20,6 +20,20 @@ const Header: React.FC<HeaderProps> = () => {
 
   const [activeGrouping, setActiveGrouping] = React.useState<number>(0);
 
+  // Keeps track of which set of grouping options should be used at any given time
+  const renderDynamicGroupingOptions = () => {
+    if (
+      state?.context?.activeProductId === bookUi1FeedConsts.productIds.xbtusd
+    ) {
+      return groupingOptions[bookUi1FeedConsts.productIds.xbtusd] as [
+        AvailableGroupings["XBTUSD"]
+      ];
+    }
+    return groupingOptions[bookUi1FeedConsts.productIds.ethusd] as [
+      AvailableGroupings["ETHUSD"]
+    ];
+  };
+
   const handleChangeGroupingClick = (event: React.MouseEvent, idx: number) => {
     event.preventDefault();
 
@@ -28,9 +42,7 @@ const Header: React.FC<HeaderProps> = () => {
 
     send({
       type: ORDER_BOOK_EVENT.GROUP,
-      activeGrouping: groupingOptions[bookUi1FeedConsts.productIds.xbtusd][
-        idx
-      ] as AvailableGroupings["XBTUSD"],
+      activeGrouping: renderDynamicGroupingOptions()[idx],
     });
   };
 
@@ -55,18 +67,9 @@ const Header: React.FC<HeaderProps> = () => {
     });
   };
 
-  const renderDynamicGroupingOptions = () => {
-    if (
-      state?.context?.activeProductId === bookUi1FeedConsts.productIds.xbtusd
-    ) {
-      return groupingOptions[bookUi1FeedConsts.productIds.xbtusd] as [
-        AvailableGroupings["XBTUSD"]
-      ];
-    }
-    return groupingOptions[bookUi1FeedConsts.productIds.ethusd] as [
-      AvailableGroupings["ETHUSD"]
-    ];
-  };
+  React.useEffect(() => {
+    setActiveGrouping(0);
+  }, [state?.context?.activeProductId]);
 
   return (
     <HeaderWrapper>
