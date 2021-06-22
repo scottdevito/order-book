@@ -60,7 +60,7 @@ export const groupByActiveGrouping = (
       const numberShouldBeMerged =
         Math.abs(lastOrderInAcc[0] - currentOrder[0]) <= activeGrouping;
 
-      // If this new number minus the last number in the acc is less than the active grouping, add it's size to the size of the last number in the acc
+      // If this new number minus the last number in the acc is less than the active grouping, add its size to the size of the last number in the acc
       if (numberShouldBeMerged) {
         return (acc = produce(acc, (draft) => {
           const lastElement = draft.pop();

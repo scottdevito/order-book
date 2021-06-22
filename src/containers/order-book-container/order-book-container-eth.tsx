@@ -7,25 +7,19 @@ import {
   ORDER_BOOK_EVENT,
 } from "../../machines/order-book-machine-types";
 import Footer from "../../components/footer/footer";
-import { useOrderBookMachineSend } from "../../contexts/useOrderBookMachineSend";
-import { useOrderBookMachineState } from "../../contexts/useOrderBookMachineState";
+import { useOrderBookMachine } from "../../contexts/useOrderBookMachine";
 import ErrorBoundary from "../../components/error-boundary/error-boundary";
 
 export interface OrderBookContainerEthProps {}
 
 const OrderBookContainerEth: React.FC<OrderBookContainerEthProps> = () => {
-  const send = useOrderBookMachineSend();
-  const state = useOrderBookMachineState();
+  const { send, state } = useOrderBookMachine();
 
   // Configure WS connection to Crypto Facilities
   const { REACT_APP_CF_SOCKET_URL } = process.env;
   const socketUrl = `${REACT_APP_CF_SOCKET_URL}`;
 
-  const {
-    sendJsonMessage,
-    lastJsonMessage,
-    // readyState,
-  } = useWebSocket(socketUrl, {
+  const { sendJsonMessage, lastJsonMessage } = useWebSocket(socketUrl, {
     onOpen: () => {
       send({ type: ORDER_BOOK_EVENT.OPEN_CONNECTION });
 

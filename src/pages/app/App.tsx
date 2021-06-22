@@ -6,8 +6,7 @@ import OrderBookContainerXbt from "../../containers/order-book-container/order-b
 import OrderBookContainerEth from "../../containers/order-book-container/order-book-container-eth";
 import { useMachine } from "@xstate/react";
 import { orderBookMachine } from "../../machines/order-book-machine";
-import { OrderBookMachineSendContext } from "../../contexts/useOrderBookMachineSend";
-import { OrderBookMachineStateContext } from "../../contexts/useOrderBookMachineState";
+import { OrderBookMachineContext } from "../../contexts/useOrderBookMachine";
 import { bookUi1FeedConsts } from "../../consts";
 
 function App() {
@@ -15,19 +14,17 @@ function App() {
 
   return (
     <AppWrapper>
-      <OrderBookMachineSendContext.Provider value={send}>
-        <OrderBookMachineStateContext.Provider value={state}>
-          <>
-            <Header />
-            {state.context.activeProductId ===
-            bookUi1FeedConsts.productIds.ethusd ? (
-              <OrderBookContainerEth />
-            ) : (
-              <OrderBookContainerXbt />
-            )}
-          </>
-        </OrderBookMachineStateContext.Provider>
-      </OrderBookMachineSendContext.Provider>
+      <OrderBookMachineContext.Provider value={{ send: send, state: state }}>
+        <>
+          <Header />
+          {state.context.activeProductId ===
+          bookUi1FeedConsts.productIds.ethusd ? (
+            <OrderBookContainerEth />
+          ) : (
+            <OrderBookContainerXbt />
+          )}
+        </>
+      </OrderBookMachineContext.Provider>
     </AppWrapper>
   );
 }

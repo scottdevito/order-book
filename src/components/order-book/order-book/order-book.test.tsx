@@ -4,13 +4,14 @@ import {
   mockBuySideRowsData,
 } from "../../../test-utils/mock-order-book-rows-data";
 import OrderBook from "./order-book";
+import { OrderBookMachineState } from "./order-book-types";
 
 afterEach(cleanup);
 
 const props = {
   sellSideRowsData: mockSellSideRowsData,
   buySideRowsData: mockBuySideRowsData,
-  machineState: { matches: () => false },
+  machineState: { matches: () => false } as unknown as OrderBookMachineState,
 };
 
 describe("Order Book", () => {
